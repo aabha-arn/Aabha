@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Details | Aabha</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    /* ================= PRODUCT LAYOUT ================= */
+    .product-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .image-section {
+      display: flex;
+      gap: 14px;
+    }
+
+    .thumbs {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .thumbs img {
+      width: 72px;
+      height: 92px;
+      object-fit: cover;
+      cursor: pointer;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      opacity: 0.7;
+      transition: 0.2s;
+    }
+
+    .thumbs img:hover {
+      border-color: var(--primary);
+      opacity: 1;
+    }
+
+    .main-img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: 16px;
+      background: #000;
+    }
+
+    .details h2 {
+      margin: 0 0 10px;
+      font-size: 26px;
+    }
+
+    .details p {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .details .price {
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 24px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #000;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      background: var(--card);
+    }
+
+    /* ================= REVIEWS ================= */
+    .reviews {
+      margin-top: 60px;
+      max-width: 760px;
+    }
+
+    .reviews h3 {
+      margin-bottom: 16px;
+    }
+
+    .review-card {
+      background: var(--card);
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .stars {
+      color: gold;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .review-form {
+      margin-top: 24px;
+      background: var(--card);
+      padding: 16px;
+      border-radius: 14px;
+    }
+
+    textarea, select {
+      width: 100%;
+      background: #111;
+      color: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .review-form button {
+      margin-top: 12px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 20px;
+      border: none;
+      background: var(--primary);
+      color: #000;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ================= MOBILE ================= */
+    @media (max-width: 768px) {
+      .product-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .main-img {
+        height: 360px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <h1 class="brand">Aabha</h1>
+</header>
+
+<div class="container">
+  <div id="product-box">Loading…</div>
+</div>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
+  authDomain: "aabha-e46fa.firebaseapp.com",
+  projectId: "aabha-e46fa"
+});
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null;
+let currentProduct = null;
+
+const productId = new URLSearchParams(window.location.search).get("id");
+
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    location.href = "login.html";
+    return;
+  }
+  currentUser = user;
+});
+
+db.collection("products").doc(productId).get().then(doc => {
+  if (!doc.exists) {
+    document.getElementById("product-box").innerText = "Product not found";
+    return;
+  }
+
+  currentProduct = doc.data();
+  const images = currentProduct.images?.length
+    ? currentProduct.images
+    : ["https://via.placeholder.com/420x420"];
+
+  const thumbs = images.map(i =>
+    `<img src="${i}" onclick="changeImage('${i}')">`
+  ).join("");
+
+  document.getElementById("product-box").innerHTML = `
+    <div class="product-layout">
+
+      <div class="image-section">
+        <div class="thumbs">${thumbs}</div>
+        <img id="mainImage" src="${images[0]}" class="main-img">
+      </div>
+
+      <div class="details">
+        <h2>${currentProduct.name}</h2>
+        <p>${currentProduct.description || ""}</p>
+        <div class="price">₹${currentProduct.price}</div>
+
+        <div class="actions">
+          <button class="btn btn-primary" onclick="buyNow()">Buy Now</button>
+          <button class="btn btn-outline" onclick="addToCart()">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="reviews">
+      <h3>Customer Reviews</h3>
+      <div id="reviewsList">Loading reviews…</div>
+
+      <div class="review-form">
+        <h4>Write a Review</h4>
+        <select id="rating">
+          <option value="5">⭐⭐⭐⭐⭐</option>
+          <option value="4">⭐⭐⭐⭐</option>
+          <option value="3">⭐⭐⭐</option>
+          <option value="2">⭐⭐</option>
+          <option value="1">⭐</option>
+        </select>
+        <textarea id="reviewText" placeholder="Write your review…"></textarea>
+        <button onclick="submitReview()">Submit Review</button>
+      </div>
+    </div>
+  `;
+
+  loadReviews();
+});
+
+function changeImage(src) {
+  document.getElementById("mainImage").src = src;
+}
+
+function addToCart() {
+  db.collection("cart")
+    .doc(currentUser.uid)
+    .collection("items")
+    .doc(productId)
+    .set({
+      name: currentProduct.name,
+      price: currentProduct.price,
+      image: currentProduct.images?.[0] || "",
+      quantity: 1,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  alert("Added to cart 🛒");
+}
+
+function buyNow() {
+  addToCart();
+  location.href = "cart.html";
+}
+
+function loadReviews() {
+  db.collection("products").doc(productId)
+    .collection("reviews")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
+      const list = document.getElementById("reviewsList");
+      list.innerHTML = "";
+
+      if (snapshot.empty) {
+        list.innerHTML = "<p style='color:#aaa'>No reviews yet</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const r = doc.data();
+        list.innerHTML += `
+          <div class="review-card">
+            <div class="stars">${"⭐".repeat(r.rating)}</div>
+            <p>${r.text}</p>
+          </div>
+        `;
+      });
+    });
+}
+
+function submitReview() {
+  const text = document.getElementById("reviewText").value.trim();
+  const rating = Number(document.getElementById("rating").value);
+
+  if (!text) {
+    alert("Please write a review");
+    return;
+  }
+
+  db.collection("products").doc(productId)
+    .collection("reviews")
+    .add({
+      text,
+      rating,
+      userId: currentUser.uid,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  document.getElementById("reviewText").value = "";
+}
+</script>
+
+</body>
+</html>

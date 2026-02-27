@@ -1,0 +1,143 @@
+:root {
+  --primary: #59AD93;
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #f1f1f1;
+  --muted: #bdbdbd;
+  --sidebar-w: 260px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ================= HEADER ACTIONS ================= */
+.header-actions {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 100;
+}
+
+.search-box { position: relative; }
+.search-box input {
+  background: #252525;
+  border: 1px solid #333;
+  color: white;
+  padding: 8px 30px 8px 12px;
+  border-radius: 20px;
+  width: 140px;
+  font-size: 14px;
+}
+
+.search-box i { position: absolute; right: 10px; top: 10px; color: var(--muted); font-size: 12px; }
+
+.auth-buttons button {
+  background: var(--card);
+  border: 1px solid #333;
+  color: var(--text);
+  padding: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.login-pill {
+  width: auto !important;
+  padding: 5px 15px !important;
+  border-radius: 20px !important;
+  background: var(--primary) !important;
+  color: #000 !important;
+  font-weight: 600;
+}
+
+/* ================= DRAWER & SIDEBAR ================= */
+.drawer-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  font-size: 22px;
+  z-index: 1001;
+  cursor: pointer;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 260px;
+  height: 100%;
+  background: #181818;
+  z-index: 1002;
+  transition: 0.3s;
+  padding: 40px 20px;
+}
+
+.sidebar.open { left: 0; }
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  text-decoration: none;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+}
+
+.nav-divider { height: 1px; background: #333; margin: 20px 0; }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 1001; }
+.overlay.show { display: block; }
+
+/* ================= LAYOUT ================= */
+.site-header { text-align: center; padding: 60px 20px 20px; }
+.brand { font-family: "Lobster Two", cursive; color: var(--primary); font-size: 40px; margin: 0; }
+.tagline { color: var(--muted); font-size: 14px; }
+
+.container { max-width: 1200px; margin: auto; padding: 15px; }
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+.product-card { background: var(--card); border-radius: 12px; overflow: hidden; }
+.product-image { height: 200px; }
+.product-image img { width: 100%; height: 100%; object-fit: cover; }
+.product-info { padding: 10px; }
+.product-info h3 { font-size: 14px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.price { color: var(--primary); font-weight: bold; margin: 5px 0; }
+.product-info button { width: 100%; padding: 8px; background: var(--primary); border: none; border-radius: 5px; font-weight: 600; }
+
+/* ================= MOBILE OPTIMIZATIONS ================= */
+@media (max-width: 600px) {
+  .header-actions {
+    position: relative;
+    top: 0;
+    right: 0;
+    padding: 10px 15px;
+    justify-content: flex-end;
+    background: #1a1a1a;
+  }
+  
+  .site-header { padding-top: 10px; }
+  .brand { font-size: 32px; }
+  
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr); /* Two items per row on mobile */
+    gap: 10px;
+  }
+  
+  .product-image { height: 180px; }
+}

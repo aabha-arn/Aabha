@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Aabha</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<div class="container" style="max-width:400px;margin-top:80px;">
+  <h1 class="brand">Aabha</h1>
+  <p class="tagline">Login to continue</p>
+
+  <input id="email" type="email" placeholder="Email"><br><br>
+  <input id="password" type="password" placeholder="Password"><br><br>
+
+  <button onclick="login()">Login</button>
+
+  <p style="text-align:center;margin:15px 0;">OR</p>
+
+  <button onclick="googleLogin()" style="background:#db4437;color:white;">
+    Continue with Google
+  </button>
+
+  <p style="text-align:center;margin-top:20px;">
+    New user?
+    <a href="#" onclick="signup()" style="color:#59AD93;">Create account</a>
+  </p>
+</div>
+
+<script>
+/* 🔥 FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
+  authDomain: "aabha-e46fa.firebaseapp.com",
+  projectId: "aabha-e46fa",
+  storageBucket: "aabha-e46fa.firebasestorage.app",
+  messagingSenderId: "801670770158",
+  appId: "1:801670770158:web:114cfff83a9407f94572ff"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* 🔐 CUSTOMER LOGIN */
+function login() {
+  if (!email.value || !password.value) {
+    alert("Please enter email and password");
+    return;
+  }
+
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .then(async (cred) => {
+      const user = cred.user;
+
+      // 🚫 BLOCK ADMINS FROM CUSTOMER SITE
+      const adminDoc = await db.collection("admin").doc(user.uid).get();
+
+      if (adminDoc.exists) {
+        alert("Admins must login from Admin Login page.");
+        await auth.signOut();
+        return;
+      }
+
+      // ✅ CUSTOMER ALLOWED
+      window.location.href = "index.html";
+    })
+    .catch(err => alert(err.message));
+}
+
+/* 🆕 SIGNUP */
+function signup() {
+  if (!email.value || !password.value) {
+    alert("Please enter email and password");
+    return;
+  }
+
+  auth.createUserWithEmailAndPassword(email.value, password.value)
+    .then(() => {
+      window.location.href = "profile.html";
+    })
+    .catch(err => alert(err.message));
+}
+
+/* 🔵 GOOGLE LOGIN */
+function googleLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  auth.signInWithPopup(provider)
+    .then(async (cred) => {
+      const user = cred.user;
+
+      // 🚫 BLOCK ADMINS
+      const adminDoc = await db.collection("admin").doc(user.uid).get();
+
+      if (adminDoc.exists) {
+        alert("Admins must login from Admin Login page.");
+        await auth.signOut();
+        return;
+      }
+
+      window.location.href = "index.html";
+    })
+    .catch(err => alert(err.message));
+}
+</script>
+
+</body>
+</html>

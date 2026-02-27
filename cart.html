@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Cart | Aabha</title>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+  <h1 class="brand">My Cart</h1>
+</header>
+
+<div class="container">
+  <div id="cart-items"></div>
+  <h2 id="total">Total: ₹0</h2>
+  <button onclick="placeCartOrder()">Place Order</button>
+</div>
+
+<script>
+/* 🔥 Firebase */
+const firebaseConfig = {
+  apiKey: "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
+  authDomain: "aabha-e46fa.firebaseapp.com",
+  projectId: "aabha-e46fa"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser;
+let total = 0;
+
+/* 🔐 Auth */
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  currentUser = user;
+  loadCart();
+});
+
+/* 🛒 Load Cart */
+function loadCart() {
+  db.collection("cart")
+    .doc(currentUser.uid)
+    .collection("items")
+    .onSnapshot(snap => {
+      const box = document.getElementById("cart-items");
+      box.innerHTML = "";
+      total = 0;
+
+      if (snap.empty) {
+        box.innerHTML = "<p>Your cart is empty</p>";
+        document.getElementById("total").innerText = "Total: ₹0";
+        return;
+      }
+
+      snap.forEach(doc => {
+        const p = doc.data();
+        const qty = Math.max(0, p.quantity); // safety
+
+        total += p.price * qty;
+
+        box.innerHTML += `
+          <div class="card">
+            <img src="${p.image}" style="width:100px">
+            <h3>${p.name}</h3>
+            <p>₹${p.price} × ${qty}</p>
+
+            <button onclick="updateQty('${doc.id}', 1)">+</button>
+            <button onclick="updateQty('${doc.id}', -1)">-</button>
+            <button onclick="removeItem('${doc.id}')">Remove</button>
+          </div>
+        `;
+      });
+
+      document.getElementById("total").innerText = "Total: ₹" + total;
+    });
+}
+
+/* ➕➖ Update Quantity (0–10 only) */
+function updateQty(id, change) {
+  const ref = db.collection("cart")
+    .doc(currentUser.uid)
+    .collection("items")
+    .doc(id);
+
+  ref.get().then(doc => {
+    if (!doc.exists) return;
+
+    let qty = doc.data().quantity + change;
+
+    // 🔒 Limits
+    if (qty < 0) qty = 0;
+    if (qty > 10) {
+      alert("Maximum 10 items allowed per product");
+      return;
+    }
+
+    // ❌ Remove if 0
+    if (qty === 0) {
+      ref.delete();
+      return;
+    }
+
+    ref.update({ quantity: qty });
+  });
+}
+
+/* ❌ Remove Item */
+function removeItem(id) {
+  db.collection("cart")
+    .doc(currentUser.uid)
+    .collection("items")
+    .doc(id)
+    .delete();
+}
+
+/* 🧾 Place Order */
+function placeCartOrder() {
+  db.collection("cart")
+    .doc(currentUser.uid)
+    .collection("items")
+    .get()
+    .then(snap => {
+      const items = [];
+
+      snap.forEach(doc => items.push(doc.data()));
+
+      if (items.length === 0) {
+        alert("Cart is empty");
+        return;
+      }
+
+      db.collection("orders").add({
+        userId: currentUser.uid,
+        items: items,
+        total: total,
+        status: "Pending",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        snap.forEach(doc => doc.ref.delete());
+        alert("Order placed successfully");
+        window.location.href = "orders.html";
+      });
+    });
+}
+</script>
+
+</body>
+</html>

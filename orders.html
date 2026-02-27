@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Orders | Aabha</title>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<style>
+.tabs {
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+.tabs button {
+  padding:8px 16px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <h1 class="brand">My Orders</h1>
+</header>
+
+<div class="container">
+
+  <div class="tabs">
+    <button onclick="setFilter('All')">All</button>
+    <button onclick="setFilter('Pending')">Pending</button>
+    <button onclick="setFilter('Confirmed')">Confirmed</button>
+    <button onclick="setFilter('Delivered')">Delivered</button>
+    <button onclick="setFilter('Returned')">Returned</button>
+  </div>
+
+  <div id="orders"></div>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
+  authDomain: "aabha-e46fa.firebaseapp.com",
+  projectId: "aabha-e46fa"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser;
+let filter = "All";
+
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  currentUser = user;
+  loadOrders();
+});
+
+function setFilter(f) {
+  filter = f;
+  loadOrders();
+}
+
+function loadOrders() {
+  db.collection("orders")
+    .where("userId", "==", currentUser.uid)
+    .onSnapshot(snapshot => {
+
+      const box = document.getElementById("orders");
+      box.innerHTML = "";
+
+      if (snapshot.empty) {
+        box.innerHTML = "<p>No orders found</p>";
+        return;
+      }
+
+      // ✅ Convert to array & sort safely
+      const orders = [];
+      snapshot.forEach(doc => {
+        orders.push(doc.data());
+      });
+
+      orders.sort((a, b) => {
+        const t1 = a.createdAt?.seconds || 0;
+        const t2 = b.createdAt?.seconds || 0;
+        return t2 - t1;
+      });
+
+      orders.forEach(o => {
+
+        if (filter !== "All" && o.status !== filter) return;
+
+        let itemsHTML = "";
+
+        // CART ORDER
+        if (o.items && o.items.length) {
+          o.items.forEach(item => {
+            itemsHTML += `
+              <div style="display:flex;gap:10px;margin:10px 0;">
+                <img src="${item.image}" style="width:60px;border-radius:8px">
+                <div>
+                  <strong>${item.name}</strong><br>
+                  ₹${item.price} × ${item.quantity}
+                </div>
+              </div>
+            `;
+          });
+        }
+        // SINGLE PRODUCT ORDER
+        else {
+          itemsHTML = `
+            <div>
+              <strong>${o.productName}</strong><br>
+              ₹${o.price}
+            </div>
+          `;
+        }
+
+        box.innerHTML += `
+          <div class="card">
+            <h3>
+              Status:
+              <span style="color:${statusColor(o.status)}">
+                ${o.status}
+              </span>
+            </h3>
+
+            ${itemsHTML}
+
+            <hr>
+            <strong>Total: ₹${o.total || o.price}</strong>
+          </div>
+        `;
+      });
+    });
+}
+
+function statusColor(s) {
+  if (s === "Pending") return "#f0ad4e";
+  if (s === "Confirmed") return "#5bc0de";
+  if (s === "Delivered") return "#5cb85c";
+  if (s === "Returned") return "#d9534f";
+  return "#fff";
+}
+</script>
+
+</body>
+</html>

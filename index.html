@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AABHA | Women’s Clothing</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Lobster+Two&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<div class="drawer-btn" id="menuBtn">
+  <i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="header-actions">
+  <div class="search-box">
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search..."
+      oninput="searchProducts()"
+    >
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </div>
+  <div class="auth-buttons">
+    <button onclick="goProfile()" title="Profile"><i class="fa-solid fa-user"></i></button>
+    <button onclick="logout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+  </div>
+</div>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2 class="brand">Aabha</h2>
+  </div>
+  <nav>
+    <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> Cart</a>
+    <a href="orders.html"><i class="fa-solid fa-box"></i> My Orders</a>
+
+    <div class="nav-divider"></div>
+
+    <a onclick="showReturnPolicy()"><i class="fa-solid fa-rotate-left"></i> Return Policy</a>
+    <a onclick="showContactInfo()"><i class="fa-solid fa-phone"></i> Contact Info</a>
+    <a onclick="showPrivacyPolicy()"><i class="fa-solid fa-shield"></i> Privacy Policy</a>
+  </nav>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<header class="site-header">
+  <h1 class="brand">Aabha</h1>
+  <p class="tagline">Where Tradition Meets Trends.</p>
+</header>
+
+<div class="container">
+  <div id="products-container" class="products-grid"></div>
+</div>
+
+<script>
+/* 🔥 Firebase Initialization */
+firebase.initializeApp({
+  apiKey: "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
+  authDomain: "aabha-e46fa.firebaseapp.com",
+  projectId: "aabha-e46fa"
+});
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let allProducts = [];
+
+/* 🔐 Auth State */
+auth.onAuthStateChanged(user => {
+  if (!user) location.href = "login.html";
+});
+
+/* 📂 Drawer Control */
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+
+menuBtn.onclick = () => {
+  sidebar.classList.add("open");
+  overlay.classList.add("show");
+};
+
+overlay.onclick = closeDrawer;
+
+function closeDrawer() {
+  sidebar.classList.remove("open");
+  overlay.classList.remove("show");
+}
+
+/* 🛍 Load Products */
+const container = document.getElementById("products-container");
+const searchInput = document.getElementById("searchInput");
+
+db.collection("products").get().then(snapshot => {
+  snapshot.forEach(doc => {
+    allProducts.push({ id: doc.id, ...doc.data() });
+  });
+  renderProducts(allProducts);
+}).catch(err => console.error("Error loading products:", err));
+
+function renderProducts(list) {
+  container.innerHTML = "";
+  if (!list.length) {
+    container.innerHTML = "<p style='text-align:center; width:100%;'>No products found</p>";
+    return;
+  }
+
+  list.forEach(p => {
+    const imageUrl = p.images && p.images.length ? p.images[0] : "placeholder.jpg";
+    container.innerHTML += `
+      <div class="product-card">
+        <div class="product-image">
+          <img src="${imageUrl}" alt="${p.name}">
+        </div>
+        <div class="product-info">
+          <h3>${p.name}</h3>
+          <p class="desc">${p.description || ""}</p>
+          <div class="price">₹${p.price}</div>
+          <button onclick="openProduct('${p.id}')">View Details</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+/* 🔍 Search */
+function searchProducts() {
+  const q = searchInput.value.toLowerCase();
+  renderProducts(
+    allProducts.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      (p.description || "").toLowerCase().includes(q)
+    )
+  );
+}
+
+/* 🔗 Navigation Functions */
+function openProduct(id) { location.href = "product-details.html?id=" + id; }
+function goProfile() { location.href = "profile.html"; }
+function logout() { auth.signOut().then(() => location.href = "login.html"); }
+
+/* 📜 Policies (Alerts) */
+function showReturnPolicy() {
+  closeDrawer();
+  alert("Return Policy – AABHA\n\n• Returns within 7 days\n• Exchanges for damage/size\n• Video proof required.");
+}
+function showContactInfo() {
+  closeDrawer();
+  alert("Contact AABHA\n\n📞 +91 62385 07436\n📧 aabha3210@gmail.com");
+}
+function showPrivacyPolicy() {
+  closeDrawer();
+  alert("Privacy Policy\n\nYour data is secure and never shared.");
+}
+</script>
+
+</body>
+</html>
