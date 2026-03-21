@@ -118,7 +118,6 @@ body {
 }
 
 .sidebar.open { left: 0; }
-
 .sidebar-header { text-align: center; margin-bottom: 30px; }
 
 .sidebar nav a {
@@ -151,21 +150,34 @@ body {
 
 .overlay.show { display: block; }
 
-/* ================= MAIN CONTAINER & GRID ================= */
+/* ================= MAIN CONTAINER & SYMMETRIC GRID ================= */
 .container {
   max-width: 1200px;
   margin: auto;
   padding: 20px 16px 60px;
 }
 
-.site-header { text-align: center; padding: 100px 20px 40px; }
-.brand { font-family: "Lobster Two", cursive; color: var(--primary); font-size: 48px; margin: 0; }
+.site-header { 
+  text-align: center; 
+  padding: 100px 20px 40px; 
+}
+
+.brand { 
+  font-family: "Lobster Two", cursive; 
+  color: var(--primary); 
+  font-size: 48px; 
+  margin: 0 auto;
+  display: block;
+}
+
 .tagline { color: var(--muted); font-size: 15px; margin-top: 5px; letter-spacing: 1px; }
 
+/* GRID FIX: Ensures all cards in a row are identical height */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 25px;
+  align-items: stretch; 
 }
 
 .product-card {
@@ -174,6 +186,9 @@ body {
   overflow: hidden;
   transition: 0.3s;
   border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .product-card:hover {
@@ -182,12 +197,81 @@ body {
   box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
-.product-image { width: 100%; height: 280px; }
-.product-image img { width: 100%; height: 100%; object-fit: cover; }
+/* IMAGE FIX: Perfectly square/proportional area */
+.product-image { 
+  width: 100%; 
+  height: 240px; 
+  background: #000;
+  flex-shrink: 0; /* Prevents image from squishing */
+}
 
-.product-info { padding: 20px; }
-.product-info h3 { font-size: 18px; margin-bottom: 8px; }
-.price { color: var(--primary); font-size: 20px; font-weight: 700; }
+.product-image img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+}
+
+/* INFO FIX: The "Symmetry Lock" */
+.product-info { 
+  padding: 20px; 
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Fills remaining space */
+}
+
+/* Lock Title to exactly 1 line height */
+.product-info h3 { 
+  font-size: 18px; 
+  line-height: 1.2;
+  height: 1.2em; /* Locked height */
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
+
+/* Lock Description to exactly 3 lines height */
+.product-info .desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+  height: 4.5em; /* Locked height: (1.5 line-height * 3 lines) */
+  margin-bottom: 15px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Pushes Price and Button to the very bottom edge */
+.price-container {
+  margin-top: auto; 
+}
+
+.price { 
+  color: var(--primary); 
+  font-size: 20px; 
+  font-weight: 700; 
+  display: block;
+  margin-bottom: 12px;
+}
+
+.view-details-btn {
+  background: var(--primary);
+  color: #000;
+  text-decoration: none;
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  display: block;
+  transition: 0.2s;
+}
+
+.view-details-btn:hover {
+  filter: brightness(1.1);
+}
 
 /* ================= PRODUCT DETAILS LAYOUT ================= */
 .product-layout {
@@ -224,29 +308,42 @@ body {
 
 .primary-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
 
-/* ================= REVIEW SYSTEM ================= */
+/* ================= CENTERED REVIEW SYSTEM ================= */
 .review-section {
-  margin-top: 80px;
+  max-width: 650px;
+  margin: 80px auto;
   background: rgba(255,255,255,0.03);
   padding: 40px;
   border-radius: 24px;
   border: 1px solid var(--border);
+  text-align: center;
 }
 
-.review-header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+.review-header { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  gap: 15px; 
+  margin-bottom: 30px; 
+}
 .review-header h2 { font-size: 24px; }
 
-.review-form { display: flex; flex-direction: column; gap: 15px; margin-bottom: 40px; }
+.review-form { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 15px; 
+  margin-bottom: 40px; 
+  align-items: center;
+}
 .review-form input, .review-form textarea {
   background: #111; border: 1px solid var(--border); color: #fff;
   padding: 15px; border-radius: 12px; outline: none; width: 100%;
 }
 
-/* Stars */
 .star-rating {
   display: flex;
   flex-direction: row-reverse;
-  justify-content: flex-end;
+  justify-content: center;
   font-size: 32px;
   margin: 10px 0;
 }
@@ -262,6 +359,7 @@ body {
   border-radius: 15px;
   margin-bottom: 15px;
   border-left: 4px solid var(--primary);
+  text-align: left;
 }
 .review-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
 .stars-text { color: var(--primary); font-size: 14px; letter-spacing: 2px; }
@@ -274,13 +372,17 @@ body {
   .search-box input { width: 140px; }
   .search-box input:focus { width: 170px; }
 
-  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-  .product-image { height: 200px; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .product-image { height: 160px; }
+  
+  /* Mobile Symmetry Lock */
+  .product-info h3 { font-size: 15px; height: 1.2em; }
+  .product-info .desc { -webkit-line-clamp: 2; height: 3em; font-size: 12px; }
 
   .product-layout { grid-template-columns: 1fr; gap: 20px; }
   .image-section { flex-direction: column-reverse; }
   .thumbs { flex-direction: row; width: 100%; overflow-x: auto; padding-bottom: 5px; }
   .thumbs img { width: 70px; height: 70px; }
   
-  .review-section { padding: 20px; }
+  .review-section { padding: 20px; margin: 40px 15px; }
 }
