@@ -4,156 +4,64 @@
 <meta charset="UTF-8">
 <title>My Cart | Aabha</title>
 <link rel="stylesheet" href="style.css">
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
-
 <body>
-
 <header class="site-header">
-  <h1 class="brand">My Cart</h1>
+  <h1 class="brand" onclick="location.href='index.html'" style="cursor:pointer">My Cart</h1>
 </header>
 
-<div class="container">
+<div class="container" style="max-width:800px;">
   <div id="cart-items"></div>
-  <h2 id="total">Total: ₹0</h2>
-  <button onclick="placeCartOrder()">Place Order</button>
+  <div class="card" style="margin-top:30px; padding:20px; text-align:right; background:var(--card);">
+    <h2 id="total" style="margin-bottom:20px;">Total: ₹0</h2>
+    <button class="primary-btn" onclick="checkout()" style="width:100%; padding:18px; font-size:18px;">Place Order on WhatsApp</button>
+  </div>
 </div>
 
 <script>
-/* 🔥 Firebase */
-const firebaseConfig = {
-  apiKey: "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
-  authDomain: "aabha-e46fa.firebaseapp.com",
-  projectId: "aabha-e46fa"
-};
+function renderCart() {
+  const cart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+  const box = document.getElementById("cart-items");
+  let total = 0;
+  box.innerHTML = cart.length === 0 ? "<p style='text-align:center; padding:40px; color:#888;'>Your cart is empty</p>" : "";
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-let currentUser;
-let total = 0;
-
-/* 🔐 Auth */
-auth.onAuthStateChanged(user => {
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
-  currentUser = user;
-  loadCart();
-});
-
-/* 🛒 Load Cart */
-function loadCart() {
-  db.collection("cart")
-    .doc(currentUser.uid)
-    .collection("items")
-    .onSnapshot(snap => {
-      const box = document.getElementById("cart-items");
-      box.innerHTML = "";
-      total = 0;
-
-      if (snap.empty) {
-        box.innerHTML = "<p>Your cart is empty</p>";
-        document.getElementById("total").innerText = "Total: ₹0";
-        return;
-      }
-
-      snap.forEach(doc => {
-        const p = doc.data();
-        const qty = Math.max(0, p.quantity); // safety
-
-        total += p.price * qty;
-
-        box.innerHTML += `
-          <div class="card">
-            <img src="${p.image}" style="width:100px">
-            <h3>${p.name}</h3>
-            <p>₹${p.price} × ${qty}</p>
-
-            <button onclick="updateQty('${doc.id}', 1)">+</button>
-            <button onclick="updateQty('${doc.id}', -1)">-</button>
-            <button onclick="removeItem('${doc.id}')">Remove</button>
-          </div>
-        `;
-      });
-
-      document.getElementById("total").innerText = "Total: ₹" + total;
-    });
-}
-
-/* ➕➖ Update Quantity (0–10 only) */
-function updateQty(id, change) {
-  const ref = db.collection("cart")
-    .doc(currentUser.uid)
-    .collection("items")
-    .doc(id);
-
-  ref.get().then(doc => {
-    if (!doc.exists) return;
-
-    let qty = doc.data().quantity + change;
-
-    // 🔒 Limits
-    if (qty < 0) qty = 0;
-    if (qty > 10) {
-      alert("Maximum 10 items allowed per product");
-      return;
-    }
-
-    // ❌ Remove if 0
-    if (qty === 0) {
-      ref.delete();
-      return;
-    }
-
-    ref.update({ quantity: qty });
+  cart.forEach((item, i) => {
+    total += Number(item.price);
+    box.innerHTML += `
+      <div class="card" style="display:flex; align-items:center; gap:20px; margin-bottom:15px; background:var(--card);">
+        <img src="${item.image}" style="width:90px; height:90px; object-fit:cover; border-radius:12px;">
+        <div style="flex:1;">
+          <h3 style="margin:0; font-size:18px;">${item.name}</h3>
+          <p style="color:var(--primary); font-weight:bold; margin:8px 0;">₹${item.price}</p>
+        </div>
+        <button onclick="remove(${i})" style="background:#ff4444; color:white; border:none; border-radius:50%; width:35px; height:35px; cursor:pointer; font-size:20px;">&times;</button>
+      </div>`;
   });
+  document.getElementById("total").innerText = "Total: ₹" + total;
 }
 
-/* ❌ Remove Item */
-function removeItem(id) {
-  db.collection("cart")
-    .doc(currentUser.uid)
-    .collection("items")
-    .doc(id)
-    .delete();
+function remove(index) {
+  let cart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+  cart.splice(index, 1);
+  localStorage.setItem("guestCart", JSON.stringify(cart));
+  renderCart();
 }
 
-/* 🧾 Place Order */
-function placeCartOrder() {
-  db.collection("cart")
-    .doc(currentUser.uid)
-    .collection("items")
-    .get()
-    .then(snap => {
-      const items = [];
+function checkout() {
+  const cart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+  if(cart.length === 0) return alert("Cart is empty");
 
-      snap.forEach(doc => items.push(doc.data()));
+  let text = "*Order Summary from Aabha Site*:\n\n";
+  let total = 0;
+  cart.forEach(item => {
+    text += `- ${item.name} (₹${item.price})\n`;
+    total += Number(item.price);
+  });
+  text += `\n*Grand Total: ₹${total}*`;
 
-      if (items.length === 0) {
-        alert("Cart is empty");
-        return;
-      }
-
-      db.collection("orders").add({
-        userId: currentUser.uid,
-        items: items,
-        total: total,
-        status: "Pending",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(() => {
-        snap.forEach(doc => doc.ref.delete());
-        alert("Order placed successfully");
-        window.location.href = "orders.html";
-      });
-    });
+  window.open(`https://wa.me/916238507436?text=${encodeURIComponent(text)}`, "_blank");
 }
+renderCart();
 </script>
-
 </body>
 </html>
