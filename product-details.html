@@ -5,6 +5,7 @@
   <title>Product Details | Aabha</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
@@ -18,6 +19,32 @@
   <p style="text-align:center; padding:50px;">Loading product details...</p>
 </div>
 
+<div class="container">
+  <section class="review-section">
+    <div class="review-header">
+      <i class="fa-solid fa-star"></i>
+      <h2>Customer Reviews</h2>
+    </div>
+
+    <div class="review-form">
+      <input type="text" id="rev-name" placeholder="Your Name">
+      <div class="star-rating">
+        <input type="radio" name="stars" id="star5" value="5"><label for="star5">★</label>
+        <input type="radio" name="stars" id="star4" value="4"><label for="star4">★</label>
+        <input type="radio" name="stars" id="star3" value="3"><label for="star3">★</label>
+        <input type="radio" name="stars" id="star2" value="2"><label for="star2">★</label>
+        <input type="radio" name="stars" id="star1" value="1"><label for="star1">★</label>
+      </div>
+      <textarea id="rev-text" placeholder="Share your feedback..." rows="3"></textarea>
+      <button class="primary-btn" onclick="submitReview()" style="max-width: 200px; margin-top: 10px;">Post Review</button>
+    </div>
+
+    <div id="reviews-display" class="reviews-list">
+      <p class="muted">Loading feedback...</p>
+    </div>
+  </section>
+</div>
+
 <script>
 firebase.initializeApp({
   apiKey: "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
@@ -28,6 +55,7 @@ const db = firebase.firestore();
 const productId = new URLSearchParams(window.location.search).get("id");
 let currentProduct = null;
 
+// Load Product Data
 db.collection("products").doc(productId).get().then(doc => {
   if (!doc.exists) {
     document.getElementById("product-box").innerText = "Product not found";
@@ -35,21 +63,16 @@ db.collection("products").doc(productId).get().then(doc => {
   }
   currentProduct = doc.data();
   renderProduct();
+  loadReviews(); // Load reviews after product is ready
 });
 
 function renderProduct() {
-  // Logic Fix: Combine images and image fields, then filter out duplicates/empty strings
   let rawImages = [];
   if (Array.isArray(currentProduct.images)) rawImages = [...currentProduct.images];
   if (currentProduct.image) rawImages.push(currentProduct.image);
-
-  // Filter to keep only unique, valid URLs
   const uniqueImages = [...new Set(rawImages)].filter(url => url && url.trim() !== "");
-  
-  // If no images at all, use placeholder
   const finalImages = uniqueImages.length > 0 ? uniqueImages : ["https://via.placeholder.com/420"];
 
-  // Only show thumbnails if there is more than 1 unique image
   const thumbsHtml = finalImages.length > 1 
     ? `<div class="thumbs">${finalImages.map(i => `<img src="${i}" onclick="document.getElementById('mainImg').src='${i}'">`).join("")}</div>`
     : "";
@@ -64,9 +87,9 @@ function renderProduct() {
         <h2>${currentProduct.name}</h2>
         <p class="desc">${currentProduct.description || "No description available."}</p>
         <div class="price" style="font-size:32px; color:var(--primary); margin:20px 0;">₹${currentProduct.price}</div>
-        <div class="actions">
+        <div class="actions" style="display: flex; flex-direction: column; gap: 10px;">
           <button class="primary-btn" onclick="buyNow()">Buy Now</button>
-          <button class="primary-btn btn-outline" onclick="addToGuestCart()" style="background:#2a2a2a; border:1px solid #444; margin-top:10px;">Add to Cart</button>
+          <button class="primary-btn" onclick="addToGuestCart()" style="background:#2a2a2a; border:1px solid #444; color: white;">Add to Cart</button>
         </div>
       </div>
     </div>
@@ -88,12 +111,65 @@ function addToGuestCart() {
   });
   localStorage.setItem("guestCart", JSON.stringify(cart));
   alert("Added to cart! 🛒");
-  location.href = "cart.html";
+}
+
+// --- REVIEW LOGIC ---
+
+function submitReview() {
+  const name = document.getElementById("rev-name").value.trim();
+  const text = document.getElementById("rev-text").value.trim();
+  const rating = document.querySelector('input[name="stars"]:checked')?.value;
+
+  if (!name || !text || !rating) {
+    alert("Please provide your name, a rating, and a comment.");
+    return;
+  }
+
+  db.collection("reviews").add({
+    productId: productId, // Link review to this specific product
+    name: name,
+    comment: text,
+    rating: Number(rating),
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    alert("Thank you for your feedback! ✨");
+    document.getElementById("rev-name").value = "";
+    document.getElementById("rev-text").value = "";
+    document.querySelectorAll('input[name="stars"]').forEach(el => el.checked = false);
+  });
+}
+
+function loadReviews() {
+  db.collection("reviews")
+    .where("productId", "==", productId) // Only show reviews for THIS product
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snap => {
+      const display = document.getElementById("reviews-display");
+      display.innerHTML = "";
+      
+      if (snap.empty) {
+        display.innerHTML = "<p class='muted'>No reviews yet. Be the first to review!</p>";
+        return;
+      }
+
+      snap.forEach(doc => {
+        const r = doc.data();
+        const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
+        display.innerHTML += `
+          <div class="review-item">
+            <div class="review-top">
+              <strong>${r.name}</strong>
+              <span class="stars-text">${stars}</span>
+            </div>
+            <p>${r.comment}</p>
+          </div>
+        `;
+      });
+    });
 }
 </script>
 
 <style>
-  /* Extra styling to ensure the layout handles the single vs multiple images nicely */
   .product-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
   .image-section { display: flex; gap: 15px; }
   .thumbs { display: flex; flex-direction: column; gap: 10px; width: 80px; }
