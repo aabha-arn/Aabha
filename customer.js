@@ -44,7 +44,7 @@ closeBtn.addEventListener("click", () => {
   modal.style.display = "none";
 });
 
-/* CONFIRM ORDER — FIXED */
+/* CONFIRM ORDER — REDIRECT TO WHATSAPP */
 confirmBtn.addEventListener("click", () => {
   if (!selectedProduct) {
     alert("No product selected");
@@ -61,6 +61,25 @@ confirmBtn.addEventListener("click", () => {
     return;
   }
 
+  // YOUR WHATSAPP NUMBER
+  const myWhatsAppNumber = "916238507436"; 
+
+  // CONSTRUCT THE MESSAGE
+  const message = `*New Order Details*%0A` +
+                  `--------------------------%0A` +
+                  `*Product:* ${selectedProduct.name}%0A` +
+                  `*Price:* ₹${selectedProduct.price}%0A%0A` +
+                  `*Customer Info:*%0A` +
+                  `Name: ${name}%0A` +
+                  `Email: ${email}%0A` +
+                  `Phone: ${phone}%0A` +
+                  `Address: ${address}`;
+
+  // OPEN WHATSAPP
+  const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${message}`;
+  window.open(whatsappUrl, "_blank");
+
+  // RECORD TO FIREBASE (Status: WhatsApp Redirected)
   db.collection("orders").add({
     productId: selectedProduct.id,
     productName: selectedProduct.name,
@@ -69,20 +88,18 @@ confirmBtn.addEventListener("click", () => {
     customerEmail: email,
     phone,
     address,
-    status: "Pending",
+    status: "WhatsApp Redirected",
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   })
   .then(() => {
-    alert("Order placed successfully!");
     modal.style.display = "none";
-
     nameInput.value = "";
     emailInput.value = "";
     phoneInput.value = "";
     addressInput.value = "";
   })
   .catch(err => {
-    alert("Order failed: " + err.message);
+    console.error("Firebase log failed: ", err);
   });
 });
 
