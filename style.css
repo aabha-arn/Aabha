@@ -1,3 +1,4 @@
+/* ================= GLOBAL VARIABLES ================= */
 :root {
   --primary: #59AD93;
   --bg: #121212;
@@ -9,20 +10,23 @@
   --sidebar-w: 260px;
 }
 
+/* ================= RESET & BASE ================= */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  margin: 0;
   background: radial-gradient(circle at top, #161616, #0e0e0e);
   color: var(--text);
   font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   overflow-x: hidden;
+  line-height: 1.6;
 }
 
-/* ================= HEADER ACTIONS ================= */
+/* ================= HEADER & SEARCH ================= */
 .header-actions {
   position: fixed;
   top: 14px;
@@ -46,7 +50,7 @@ body {
   width: 180px;
   font-size: 13px;
   outline: none;
-  transition: 0.3s;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-box input:focus {
@@ -64,17 +68,12 @@ body {
   pointer-events: none;
 }
 
-.auth-buttons {
-  display: flex;
-  gap: 8px;
-}
-
 .auth-buttons button {
   background: var(--card);
   border: 1px solid var(--border);
   color: var(--text);
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   cursor: pointer;
   display: grid;
@@ -87,13 +86,13 @@ body {
   color: #000;
 }
 
-/* ================= DRAWER & SIDEBAR ================= */
+/* ================= SIDEBAR & DRAWER ================= */
 .drawer-btn {
   position: fixed;
   top: 14px;
   left: 14px;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -105,215 +104,183 @@ body {
   color: var(--text);
 }
 
-.drawer-btn:hover {
-  background: var(--primary);
-  color: #000;
-}
-
 .sidebar {
   position: fixed;
   top: 0;
-  left: -260px;
+  left: -280px;
   width: var(--sidebar-w);
   height: 100%;
   background: #141414;
   z-index: 1005;
-  transition: 0.35s ease;
-  padding: 28px 18px;
-  box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+  transition: 0.3s ease-in-out;
+  padding: 30px 20px;
+  box-shadow: 10px 0 30px rgba(0,0,0,0.5);
 }
 
-.sidebar.open {
-  left: 0;
-}
+.sidebar.open { left: 0; }
 
-.sidebar-header {
-  text-align: center;
-  margin-bottom: 25px;
-}
-
-.sidebar-header .brand {
-  font-size: 32px;
-}
+.sidebar-header { text-align: center; margin-bottom: 30px; }
 
 .sidebar nav a {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 15px;
   color: var(--text);
   text-decoration: none;
-  padding: 12px 14px;
-  border-radius: 10px;
-  font-size: 15px;
-  transition: 0.2s ease;
-  margin-bottom: 5px;
+  padding: 12px 15px;
+  border-radius: 12px;
+  margin-bottom: 6px;
+  transition: 0.2s;
 }
 
-.sidebar nav a:hover {
-  background: var(--card);
+.sidebar nav a:hover, .sidebar nav a.active {
+  background: rgba(89, 173, 147, 0.1);
   color: var(--primary);
 }
 
-.sidebar nav a.active {
-  background: rgba(89, 173, 147, 0.15);
-  color: var(--primary);
-  font-weight: 600;
-}
-
-.nav-divider {
-  height: 1px;
-  background: var(--border);
-  margin: 18px 0;
-}
+.nav-divider { height: 1px; background: var(--border); margin: 20px 0; }
 
 .overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
   display: none;
   z-index: 1004;
 }
 
-.overlay.show {
-  display: block;
-}
+.overlay.show { display: block; }
 
-/* ================= HEADER ================= */
-.site-header {
-  text-align: center;
-  padding: 80px 20px 25px;
-}
-
-.brand {
-  font-family: "Lobster Two", cursive;
-  color: var(--primary);
-  font-size: 42px;
-  margin: 0;
-}
-
-.tagline {
-  color: var(--muted);
-  font-size: 14px;
-  margin-top: 6px;
-}
-
-/* ================= CONTAINER ================= */
+/* ================= MAIN CONTAINER & GRID ================= */
 .container {
   max-width: 1200px;
   margin: auto;
-  padding: 10px 16px 30px;
+  padding: 20px 16px 60px;
 }
 
-/* ================= PRODUCTS GRID ================= */
+.site-header { text-align: center; padding: 100px 20px 40px; }
+.brand { font-family: "Lobster Two", cursive; color: var(--primary); font-size: 48px; margin: 0; }
+.tagline { color: var(--muted); font-size: 15px; margin-top: 5px; letter-spacing: 1px; }
+
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 25px;
 }
 
 .product-card {
-  background: linear-gradient(180deg, #1e1e1e, #161616);
-  border-radius: 14px;
+  background: var(--card);
+  border-radius: 18px;
   overflow: hidden;
-  transition: 0.25s ease;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  border: 1px solid transparent;
+  transition: 0.3s;
+  border: 1px solid var(--border);
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 14px 30px rgba(0,0,0,0.6);
-  border-color: var(--border);
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
-.product-image {
-  width: 100%;
-  height: 240px;
-  background: #000;
+.product-image { width: 100%; height: 280px; }
+.product-image img { width: 100%; height: 100%; object-fit: cover; }
+
+.product-info { padding: 20px; }
+.product-info h3 { font-size: 18px; margin-bottom: 8px; }
+.price { color: var(--primary); font-size: 20px; font-weight: 700; }
+
+/* ================= PRODUCT DETAILS LAYOUT ================= */
+.product-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  margin-top: 20px;
 }
 
-.product-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.image-section { display: flex; gap: 15px; }
+.thumbs { display: flex; flex-direction: column; gap: 12px; width: 85px; }
+.thumbs img { 
+  width: 85px; height: 85px; object-fit: cover; 
+  border-radius: 10px; cursor: pointer; border: 2px solid transparent; 
 }
+.thumbs img:hover { border-color: var(--primary); }
+.main-img { width: 100%; max-height: 600px; object-fit: cover; border-radius: 20px; }
 
-.product-info {
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.product-info h3 {
-  font-size: 15px;
-  margin: 0;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.desc {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.4;
-  height: 36px;
-  overflow: hidden;
-}
-
-.card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 10px;
-  gap: 10px;
-}
-
-.price {
-  color: var(--primary);
-  font-weight: 700;
-  font-size: 16px;
-}
+.details h2 { font-size: 32px; margin-bottom: 15px; }
+.details .desc { color: var(--muted); margin-bottom: 25px; font-size: 16px; }
 
 .primary-btn {
-  flex: 1;
-  padding: 8px;
-  border-radius: 20px;
-  border: none;
   background: var(--primary);
   color: #000;
-  font-weight: 600;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 16px;
   cursor: pointer;
+  transition: 0.3s;
+  width: 100%;
 }
 
-.primary-btn:hover {
-  filter: brightness(1.1);
+.primary-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+/* ================= REVIEW SYSTEM ================= */
+.review-section {
+  margin-top: 80px;
+  background: rgba(255,255,255,0.03);
+  padding: 40px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
 }
 
-/* ================= MOBILE ================= */
+.review-header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+.review-header h2 { font-size: 24px; }
+
+.review-form { display: flex; flex-direction: column; gap: 15px; margin-bottom: 40px; }
+.review-form input, .review-form textarea {
+  background: #111; border: 1px solid var(--border); color: #fff;
+  padding: 15px; border-radius: 12px; outline: none; width: 100%;
+}
+
+/* Stars */
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  font-size: 32px;
+  margin: 10px 0;
+}
+.star-rating input { display: none; }
+.star-rating label { color: #333; cursor: pointer; transition: 0.2s; }
+.star-rating input:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label { color: var(--primary); }
+
+.review-item {
+  background: var(--card-soft);
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  border-left: 4px solid var(--primary);
+}
+.review-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.stars-text { color: var(--primary); font-size: 14px; letter-spacing: 2px; }
+
+/* ================= MOBILE ADAPTATION ================= */
 @media (max-width: 768px) {
-  .header-actions {
-    top: 10px;
-    right: 10px;
-  }
+  .site-header { padding: 80px 20px 20px; }
+  .brand { font-size: 36px; }
   
-  .search-box input {
-    width: 120px;
-  }
+  .search-box input { width: 140px; }
+  .search-box input:focus { width: 170px; }
+
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+  .product-image { height: 200px; }
+
+  .product-layout { grid-template-columns: 1fr; gap: 20px; }
+  .image-section { flex-direction: column-reverse; }
+  .thumbs { flex-direction: row; width: 100%; overflow-x: auto; padding-bottom: 5px; }
+  .thumbs img { width: 70px; height: 70px; }
   
-  .search-box input:focus {
-    width: 160px;
-  }
-
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .product-image {
-    height: 180px;
-  }
+  .review-section { padding: 20px; }
 }
