@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
@@ -16,7 +18,9 @@
 </header>
 
 <div class="container" id="product-box">
-  <p style="text-align:center; padding:50px;">Loading product details...</p>
+  <p style="text-align:center; padding:100px; color: var(--muted);">
+    <i class="fa-solid fa-circle-notch fa-spin"></i> Loading product details...
+  </p>
 </div>
 
 <div class="container">
@@ -28,6 +32,7 @@
 
     <div class="review-form">
       <input type="text" id="rev-name" placeholder="Your Name">
+      
       <div class="star-rating">
         <input type="radio" name="stars" id="star5" value="5"><label for="star5">★</label>
         <input type="radio" name="stars" id="star4" value="4"><label for="star4">★</label>
@@ -35,61 +40,89 @@
         <input type="radio" name="stars" id="star2" value="2"><label for="star2">★</label>
         <input type="radio" name="stars" id="star1" value="1"><label for="star1">★</label>
       </div>
+      
       <textarea id="rev-text" placeholder="Share your feedback..." rows="3"></textarea>
-      <button class="primary-btn" onclick="submitReview()" style="max-width: 200px; margin-top: 10px;">Post Review</button>
+      <button class="primary-btn" onclick="submitReview()" style="max-width: 220px; margin-top: 15px;">
+        Post Review
+      </button>
     </div>
 
     <div id="reviews-display" class="reviews-list">
-      <p class="muted">Loading feedback...</p>
+      <p class="muted" style="text-align:center;">Loading feedback...</p>
     </div>
   </section>
 </div>
 
 <script>
-firebase.initializeApp({
+// --- FIREBASE CONFIGURATION ---
+const firebaseConfig = {
   apiKey: "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
   authDomain: "aabha-e46fa.firebaseapp.com",
   projectId: "aabha-e46fa"
-});
+};
+
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const productId = new URLSearchParams(window.location.search).get("id");
+
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get("id");
 let currentProduct = null;
 
-// Load Product Data
-db.collection("products").doc(productId).get().then(doc => {
-  if (!doc.exists) {
-    document.getElementById("product-box").innerText = "Product not found";
-    return;
-  }
-  currentProduct = doc.data();
-  renderProduct();
-  loadReviews(); // Load reviews after product is ready
-});
+if (!productId) {
+    document.getElementById("product-box").innerHTML = "<p style='text-align:center; padding:50px;'>No product selected.</p>";
+} else {
+    loadProductData();
+}
+
+// --- CORE FUNCTIONS ---
+
+function loadProductData() {
+  db.collection("products").doc(productId).get().then(doc => {
+    if (!doc.exists) {
+      document.getElementById("product-box").innerHTML = "<p style='text-align:center; padding:50px;'>Product not found.</p>";
+      return;
+    }
+    currentProduct = doc.data();
+    renderProduct();
+    loadReviews(); 
+  }).catch(err => {
+    console.error("Error loading product:", err);
+    document.getElementById("product-box").innerText = "Error loading details.";
+  });
+}
 
 function renderProduct() {
   let rawImages = [];
   if (Array.isArray(currentProduct.images)) rawImages = [...currentProduct.images];
   if (currentProduct.image) rawImages.push(currentProduct.image);
+  
   const uniqueImages = [...new Set(rawImages)].filter(url => url && url.trim() !== "");
-  const finalImages = uniqueImages.length > 0 ? uniqueImages : ["https://via.placeholder.com/420"];
+  const finalImages = uniqueImages.length > 0 ? uniqueImages : ["https://via.placeholder.com/500"];
 
   const thumbsHtml = finalImages.length > 1 
-    ? `<div class="thumbs">${finalImages.map(i => `<img src="${i}" onclick="document.getElementById('mainImg').src='${i}'">`).join("")}</div>`
+    ? `<div class="thumbs">${finalImages.map(imgUrl => `
+        <img src="${imgUrl}" onclick="document.getElementById('mainImg').src='${imgUrl}'" alt="thumbnail">
+      `).join("")}</div>`
     : "";
 
   document.getElementById("product-box").innerHTML = `
     <div class="product-layout">
       <div class="image-section">
         ${thumbsHtml}
-        <img id="mainImg" src="${finalImages[0]}" class="main-img">
+        <img id="mainImg" src="${finalImages[0]}" class="main-img" alt="${currentProduct.name}">
       </div>
       <div class="details">
         <h2>${currentProduct.name}</h2>
-        <p class="desc">${currentProduct.description || "No description available."}</p>
-        <div class="price" style="font-size:32px; color:var(--primary); margin:20px 0;">₹${currentProduct.price}</div>
-        <div class="actions" style="display: flex; flex-direction: column; gap: 10px;">
-          <button class="primary-btn" onclick="buyNow()">Buy Now</button>
-          <button class="primary-btn" onclick="addToGuestCart()" style="background:#2a2a2a; border:1px solid #444; color: white;">Add to Cart</button>
+        <p class="desc">${currentProduct.description || "Sophisticated design crafted for style and comfort."}</p>
+        <div class="price">₹${currentProduct.price}</div>
+        
+        <div class="actions">
+          <button class="primary-btn" onclick="buyNow()">
+            <i class="fa-brands fa-whatsapp"></i> Buy Now
+          </button>
+          <button class="primary-btn secondary-btn" onclick="addToGuestCart()">
+            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+          </button>
         </div>
       </div>
     </div>
@@ -107,13 +140,13 @@ function addToGuestCart() {
     id: productId, 
     name: currentProduct.name, 
     price: currentProduct.price, 
-    image: currentProduct.image || currentProduct.images?.[0] 
+    image: currentProduct.image || (currentProduct.images ? currentProduct.images[0] : "") 
   });
   localStorage.setItem("guestCart", JSON.stringify(cart));
   alert("Added to cart! 🛒");
 }
 
-// --- REVIEW LOGIC ---
+// --- FIXED REVIEW LOGIC ---
 
 function submitReview() {
   const name = document.getElementById("rev-name").value.trim();
@@ -126,29 +159,32 @@ function submitReview() {
   }
 
   db.collection("reviews").add({
-    productId: productId, // Link review to this specific product
+    productId: productId,
     name: name,
     comment: text,
     rating: Number(rating),
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   }).then(() => {
-    alert("Thank you for your feedback! ✨");
+    alert("Review posted successfully! ✨");
     document.getElementById("rev-name").value = "";
     document.getElementById("rev-text").value = "";
     document.querySelectorAll('input[name="stars"]').forEach(el => el.checked = false);
+  }).catch(err => {
+    console.error(err);
   });
 }
 
 function loadReviews() {
+  // We removed .orderBy("createdAt", "desc") temporarily 
+  // This allows reviews to show immediately without an index error.
   db.collection("reviews")
-    .where("productId", "==", productId) // Only show reviews for THIS product
-    .orderBy("createdAt", "desc")
+    .where("productId", "==", productId) 
     .onSnapshot(snap => {
       const display = document.getElementById("reviews-display");
       display.innerHTML = "";
       
       if (snap.empty) {
-        display.innerHTML = "<p class='muted'>No reviews yet. Be the first to review!</p>";
+        display.innerHTML = "<p class='muted' style='text-align:center;'>No reviews yet. Be the first to share your thoughts!</p>";
         return;
       }
 
@@ -156,31 +192,47 @@ function loadReviews() {
         const r = doc.data();
         const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
         display.innerHTML += `
-          <div class="review-item">
-            <div class="review-top">
-              <strong>${r.name}</strong>
-              <span class="stars-text">${stars}</span>
+          <div class="review-item" style="background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--primary);">
+            <div class="review-top" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <strong style="color: #fff;">${r.name}</strong>
+              <span class="stars-text" style="color: var(--primary);">${stars}</span>
             </div>
-            <p>${r.comment}</p>
+            <p style="color: #ccc; margin: 0;">${r.comment}</p>
           </div>
         `;
       });
+    }, err => {
+      console.error("Firestore Error:", err);
+      document.getElementById("reviews-display").innerHTML = "<p class='muted'>Failed to load reviews.</p>";
     });
 }
 </script>
 
 <style>
-  .product-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
+  .product-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; margin-top: 20px; align-items: start; }
   .image-section { display: flex; gap: 15px; }
-  .thumbs { display: flex; flex-direction: column; gap: 10px; width: 80px; }
-  .thumbs img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); }
+  .thumbs { display: flex; flex-direction: column; gap: 12px; width: 85px; flex-shrink: 0; }
+  .thumbs img { width: 85px; height: 85px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 2px solid transparent; background: #1a1a1a; }
   .thumbs img:hover { border-color: var(--primary); }
-  .main-img { width: 100%; max-height: 500px; object-fit: cover; border-radius: 15px; background: #000; }
-  
+  .main-img { width: 100%; max-height: 550px; object-fit: cover; border-radius: 20px; background: #000; }
+  .details h2 { font-size: 32px; margin-bottom: 10px; color: var(--text); }
+  .details .desc { font-size: 16px; color: var(--muted); margin-bottom: 25px; line-height: 1.6; }
+  .details .price { font-size: 36px; font-weight: 700; color: var(--primary); margin-bottom: 30px; }
+  .actions { display: flex; flex-direction: column; gap: 12px; }
+  .secondary-btn { background: #2a2a2a !important; border: 1px solid #444 !important; color: white !important; }
+
+  .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; font-size: 32px; margin: 15px 0; }
+  .star-rating input { display: none; }
+  .star-rating label { color: #333; cursor: pointer; transition: 0.2s; }
+  .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: var(--primary); }
+
   @media (max-width: 768px) {
-    .product-layout { grid-template-columns: 1fr; }
+    .product-layout { grid-template-columns: 1fr; gap: 25px; }
     .image-section { flex-direction: column-reverse; }
-    .thumbs { flex-direction: row; width: 100%; overflow-x: auto; }
+    .thumbs { flex-direction: row; width: 100%; overflow-x: auto; padding-bottom: 10px; }
+    .thumbs img { width: 70px; height: 70px; }
+    .details h2 { font-size: 24px; }
+    .details .price { font-size: 28px; }
   }
 </style>
 </body>
