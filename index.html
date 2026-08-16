@@ -6,8 +6,16 @@
   <title>AABHA | Women’s Clothing</title>
 
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Lobster+Two&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lobster+Two&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    rel="stylesheet"
+  >
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -15,132 +23,2189 @@
 
 <body>
 
-<button class="drawer-btn" id="menuBtn" aria-label="Menu">
+<!-- =========================================================
+     MENU BUTTON
+     ========================================================= -->
+
+<button
+  class="drawer-btn"
+  id="menuBtn"
+  aria-label="Menu"
+>
   <i class="fa-solid fa-bars"></i>
 </button>
 
-<div class="overlay" id="overlay"></div>
-<nav class="sidebar" id="sidebar">
+
+<!-- =========================================================
+     OVERLAY
+     ========================================================= -->
+
+<div
+  class="overlay"
+  id="overlay"
+></div>
+
+
+<!-- =========================================================
+     SIDEBAR
+     ========================================================= -->
+
+<nav
+  class="sidebar"
+  id="sidebar"
+>
+
   <div class="sidebar-header">
-    <h2 class="brand">Aabha</h2>
+
+    <img
+      src="aabha-logo.png"
+      alt="Aabha"
+      class="sidebar-logo"
+    >
+
   </div>
+
+
   <nav class="nav-links">
-    <a href="index.html" class="active"><i class="fa-solid fa-house"></i> Home</a>
-    <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> My Cart</a>
-    <a href="#" onclick="openWhatsApp('Check my order status')"><i class="fa-solid fa-truck"></i> My Orders</a>
-    
-    <div class="nav-divider"></div>
-    
-    <a href="https://www.instagram.com/aabha.arn/" target="_blank"><i class="fa-brands fa-instagram"></i> Instagram</a>
-    <a href="https://www.facebook.com/people/Aabha-Arn/pfbid0mjNHLxncKUGoy4m1uNLGF4TtwvMrMF7YnWFbRVC83bAJndu3Tawff9qCworhri9Hl/?ref=FB_PL_BIDIRECTIONAL_ig_profile_ac" target="_blank"><i class="fa-brands fa-facebook"></i> Facebook</a>
-    <a href="https://maps.app.goo.gl/bSPwxRDEsD1Vmw8Y8" target="_blank"><i class="fa-solid fa-location-dot"></i> Visit Store</a>
+
+    <a
+      href="index.html"
+      class="active"
+    >
+      <i class="fa-solid fa-house"></i>
+      Home
+    </a>
+
+
+    <a href="favorites.html">
+
+      <i class="fa-solid fa-heart"></i>
+
+      My Favorites
+
+    </a>
+
+
+    <a
+      href="#"
+      onclick="openWhatsApp('Check my order status'); return false;"
+    >
+
+      <i class="fa-solid fa-truck"></i>
+
+      My Orders
+
+    </a>
+
 
     <div class="nav-divider"></div>
-    
-    <a href="#" onclick="openWhatsApp('I need help with something')"><i class="fa-solid fa-envelope"></i> Contact Us</a>
-    <a href="#" onclick="alert('Privacy Policy: We value your data security.')"><i class="fa-solid fa-shield-halved"></i> Privacy Policy</a>
-    <a href="#" onclick="alert('Return Policy: 7-day easy returns on all items.')"><i class="fa-solid fa-rotate-left"></i> Return Policy</a>
+
+
+    <a
+      href="https://www.instagram.com/aabha.arn/"
+      target="_blank"
+    >
+
+      <i class="fa-brands fa-instagram"></i>
+
+      Instagram
+
+    </a>
+
+
+    <a
+      href="https://www.facebook.com/people/Aabha-Arn/pfbid0mjNHLxncKUGoy4m1uNLGF4TtwvMrMF7YnWFbRVC83bAJndu3Tawff9qCworhri9Hl/?ref=FB_PL_BIDIRECTIONAL_ig_profile_ac"
+      target="_blank"
+    >
+
+      <i class="fa-brands fa-facebook"></i>
+
+      Facebook
+
+    </a>
+
+
+    <a
+      href="https://maps.app.goo.gl/bSPwxRDEsD1Vmw8Y8"
+      target="_blank"
+    >
+
+      <i class="fa-solid fa-location-dot"></i>
+
+      Visit Store
+
+    </a>
+
+
+    <div class="nav-divider"></div>
+
+
+    <!-- CONTACT US -->
+
+    <a
+      href="#"
+      onclick="openContactModal(); return false;"
+    >
+
+      <i class="fa-solid fa-envelope"></i>
+
+      Contact Us
+
+    </a>
+
+
+    <!-- PRIVACY POLICY -->
+
+    <a
+      href="#"
+      onclick="openPolicyModal('privacy'); return false;"
+    >
+
+      <i class="fa-solid fa-shield-halved"></i>
+
+      Privacy Policy
+
+    </a>
+
+
+    <!-- RETURN POLICY -->
+
+    <a
+      href="#"
+      onclick="openPolicyModal('return'); return false;"
+    >
+
+      <i class="fa-solid fa-rotate-left"></i>
+
+      Return Policy
+
+    </a>
+
   </nav>
+
 </nav>
 
+
+<!-- =========================================================
+     HEADER ACTIONS
+     ========================================================= -->
+
 <div class="header-actions">
+
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Search products..." oninput="searchProducts()">
+
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search products..."
+      oninput="searchProducts()"
+    >
+
     <i class="fa-solid fa-magnifying-glass"></i>
+
   </div>
+
+
   <div class="auth-buttons">
-    <button onclick="location.href='cart.html'">
-      <i class="fa-solid fa-cart-shopping"></i>
+
+    <button
+      onclick="location.href='favorites.html'"
+      aria-label="Favorites"
+      title="My Favorites"
+    >
+
+      <i class="fa-solid fa-heart"></i>
+
     </button>
+
   </div>
+
 </div>
+
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
 
 <header class="site-header">
-  <h1 class="brand">Aabha</h1>
-  <p class="tagline">Where Tradition Meets Trends.</p>
+
+  <img
+    src="aabha-logo.png"
+    alt="Aabha"
+    class="brand-logo"
+  >
+
+  <p class="tagline">
+
+    Where Tradition Meets Trends.
+
+  </p>
+
 </header>
 
-<div class="container">
-  <div class="products-grid" id="products-container">
+
+<!-- =========================================================
+     LATEST PRODUCT SLIDER
+     ========================================================= -->
+
+<section class="latest-slider-section">
+
+  <div class="latest-slider">
+
+    <button
+      class="slider-arrow slider-prev"
+      id="sliderPrev"
+      aria-label="Previous product"
+    >
+
+      <i class="fa-solid fa-chevron-left"></i>
+
+    </button>
+
+
+    <div class="slider-window">
+
+      <div
+        class="slider-track"
+        id="slider-track"
+      ></div>
+
     </div>
+
+
+    <button
+      class="slider-arrow slider-next"
+      id="sliderNext"
+      aria-label="Next product"
+    >
+
+      <i class="fa-solid fa-chevron-right"></i>
+
+    </button>
+
+  </div>
+
+
+  <div
+    class="slider-dots"
+    id="slider-dots"
+  ></div>
+
+</section>
+
+
+<!-- =========================================================
+     PRODUCTS
+     ========================================================= -->
+
+<div class="container">
+
+  <div
+    class="products-grid"
+    id="products-container"
+  ></div>
+
 </div>
 
+
+<!-- =========================================================
+     CONTACT MODAL
+     ========================================================= -->
+
+<div
+  class="policy-modal"
+  id="contactModal"
+  aria-hidden="true"
+>
+
+  <div
+    class="policy-modal-backdrop"
+    onclick="closeContactModal()"
+  ></div>
+
+
+  <div
+    class="policy-modal-card contact-modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="contactModalTitle"
+  >
+
+    <button
+      class="policy-modal-close"
+      onclick="closeContactModal()"
+      aria-label="Close"
+    >
+
+      <i class="fa-solid fa-xmark"></i>
+
+    </button>
+
+
+    <div class="policy-modal-icon">
+
+      <i class="fa-solid fa-headset"></i>
+
+    </div>
+
+
+    <h2 id="contactModalTitle">
+
+      Contact Aabha
+
+    </h2>
+
+
+    <p class="contact-intro">
+
+      We're happy to help you with your orders,
+      products, sizes, availability and anything
+      else you need.
+
+    </p>
+
+
+    <!-- MOBILE -->
+
+    <a
+      href="tel:+916238507436"
+      class="contact-detail"
+    >
+
+      <span class="contact-detail-icon">
+
+        <i class="fa-solid fa-phone"></i>
+
+      </span>
+
+
+      <span class="contact-detail-text">
+
+        <small>Mobile</small>
+
+        <strong>
+          +91 62385 07436
+        </strong>
+
+      </span>
+
+    </a>
+
+
+    <!-- EMAIL -->
+
+    <a
+      href="mailto:aabha3210@gmail.com"
+      class="contact-detail"
+    >
+
+      <span class="contact-detail-icon">
+
+        <i class="fa-solid fa-envelope"></i>
+
+      </span>
+
+
+      <span class="contact-detail-text">
+
+        <small>Email</small>
+
+        <strong>
+          aabha3210@gmail.com
+        </strong>
+
+      </span>
+
+    </a>
+
+
+    <!-- ACTION BUTTONS -->
+
+    <div class="contact-actions">
+
+      <a
+        href="tel:+916238507436"
+        class="contact-action call-action"
+      >
+
+        <i class="fa-solid fa-phone"></i>
+
+        Call
+
+      </a>
+
+
+      <a
+        href="https://wa.me/916238507436"
+        target="_blank"
+        class="contact-action whatsapp-action"
+      >
+
+        <i class="fa-brands fa-whatsapp"></i>
+
+        WhatsApp
+
+      </a>
+
+
+      <a
+        href="mailto:aabha3210@gmail.com"
+        class="contact-action email-action"
+      >
+
+        <i class="fa-solid fa-envelope"></i>
+
+        Email
+
+      </a>
+
+    </div>
+
+
+    <button
+      class="policy-modal-ok"
+      onclick="closeContactModal()"
+    >
+
+      Close
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     POLICY MODAL
+     ========================================================= -->
+
+<div
+  class="policy-modal"
+  id="policyModal"
+  aria-hidden="true"
+>
+
+  <div
+    class="policy-modal-backdrop"
+    onclick="closePolicyModal()"
+  ></div>
+
+
+  <div
+    class="policy-modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="policyModalTitle"
+  >
+
+    <button
+      class="policy-modal-close"
+      onclick="closePolicyModal()"
+      aria-label="Close"
+    >
+
+      <i class="fa-solid fa-xmark"></i>
+
+    </button>
+
+
+    <div class="policy-modal-icon">
+
+      <i
+        id="policyModalIcon"
+        class="fa-solid fa-shield-halved"
+      ></i>
+
+    </div>
+
+
+    <h2 id="policyModalTitle">
+
+      Privacy Policy
+
+    </h2>
+
+
+    <p id="policyModalText">
+
+      We value your data security.
+
+    </p>
+
+
+    <button
+      class="policy-modal-ok"
+      onclick="closePolicyModal()"
+    >
+
+      Okay
+
+    </button>
+
+  </div>
+
+</div>
+
+
 <script>
+
+/* =========================================================
+   FIREBASE
+   ========================================================= */
+
 const firebaseConfig = {
-  apiKey: "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
-  authDomain: "aabha-e46fa.firebaseapp.com",
-  projectId: "aabha-e46fa"
+
+  apiKey:
+    "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
+
+  authDomain:
+    "aabha-e46fa.firebaseapp.com",
+
+  projectId:
+    "aabha-e46fa"
+
 };
+
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+
+
+const db =
+  firebase.firestore();
+
+
+/* =========================================================
+   PRODUCTS
+   ========================================================= */
 
 let allProducts = [];
-const container = document.getElementById("products-container");
 
-// Load Products
-db.collection("products").orderBy("createdAt", "desc").get()
-  .then(snapshot => {
-    allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    renderProducts(allProducts);
-  });
 
-function renderProducts(list) {
-  container.innerHTML = "";
-  if (list.length === 0) {
-    container.innerHTML = "<p class='muted'>No products found</p>";
-    return;
+const container =
+  document.getElementById(
+    "products-container"
+  );
+
+
+/* =========================================================
+   FAVORITES
+   ========================================================= */
+
+const FAVORITES_KEY =
+  "aabhaFavorites";
+
+
+function getFavorites() {
+
+  return JSON.parse(
+    localStorage.getItem(
+      FAVORITES_KEY
+    ) || "[]"
+  );
+
+}
+
+
+function saveFavorites(
+  favorites
+) {
+
+  localStorage.setItem(
+    FAVORITES_KEY,
+    JSON.stringify(
+      favorites
+    )
+  );
+
+}
+
+
+function isFavorite(
+  id
+) {
+
+  const favorites =
+    getFavorites();
+
+
+  return favorites.some(
+    product =>
+      product.id === id
+  );
+
+}
+
+
+function toggleFavorite(
+  event,
+  product
+) {
+
+  if (event) {
+
+    event.stopPropagation();
+
   }
 
-  list.forEach(p => {
-    const imageUrl = p.images?.[0] || p.image || "https://via.placeholder.com/300";
-    container.innerHTML += `
-      <article class="product-card" onclick="openProduct('${p.id}')">
-        <div class="product-image">
-          <img src="${imageUrl}" alt="${p.name}">
-        </div>
-        <div class="product-info">
-          <h3>${p.name}</h3>
-          <p class="desc">${p.description || ""}</p>
-          <div class="card-footer">
-            <span class="price">₹${p.price}</span>
-            <button class="primary-btn">View Details</button>
-          </div>
-        </div>
-      </article>
-    `;
-  });
+
+  let favorites =
+    getFavorites();
+
+
+  const existingIndex =
+    favorites.findIndex(
+      item =>
+        item.id === product.id
+    );
+
+
+  if (
+    existingIndex !== -1
+  ) {
+
+    favorites.splice(
+      existingIndex,
+      1
+    );
+
+  } else {
+
+    favorites.push({
+
+      id:
+        product.id,
+
+      name:
+        product.name,
+
+      price:
+        product.price,
+
+      description:
+        product.description || "",
+
+      image:
+        product.images?.[0] ||
+        product.image ||
+        ""
+
+    });
+
+  }
+
+
+  saveFavorites(
+    favorites
+  );
+
+
+  renderProducts(
+    getFilteredProducts()
+  );
+
 }
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+function getFilteredProducts() {
+
+  const input =
+    document.getElementById(
+      "searchInput"
+    );
+
+
+  const q =
+    input.value
+      .toLowerCase()
+      .trim();
+
+
+  if (!q) {
+
+    return allProducts;
+
+  }
+
+
+  return allProducts.filter(
+    product =>
+      product.name
+        .toLowerCase()
+        .includes(q)
+  );
+
+}
+
 
 function searchProducts() {
-  const q = document.getElementById("searchInput").value.toLowerCase();
-  renderProducts(allProducts.filter(p => p.name.toLowerCase().includes(q)));
+
+  renderProducts(
+    getFilteredProducts()
+  );
+
 }
 
-function openProduct(id) {
-  location.href = "product-details.html?id=" + id;
+
+/* =========================================================
+   LOAD PRODUCTS
+   ========================================================= */
+
+db.collection("products")
+  .orderBy(
+    "createdAt",
+    "desc"
+  )
+  .get()
+
+  .then(
+    snapshot => {
+
+      allProducts =
+        snapshot.docs.map(
+          doc => ({
+
+            id:
+              doc.id,
+
+            ...doc.data()
+
+          })
+        );
+
+
+      renderProducts(
+        allProducts
+      );
+
+
+      createLatestSlider(
+        allProducts
+      );
+
+    }
+  )
+
+  .catch(
+    error => {
+
+      console.error(
+        "Error loading products:",
+        error
+      );
+
+
+      container.innerHTML = `
+
+        <p class="muted">
+
+          Unable to load products.
+
+        </p>
+
+      `;
+
+    }
+  );
+
+
+/* =========================================================
+   RENDER PRODUCTS
+   ========================================================= */
+
+function renderProducts(
+  list
+) {
+
+  container.innerHTML = "";
+
+
+  if (
+    list.length === 0
+  ) {
+
+    container.innerHTML =
+      "<p class='muted'>No products found</p>";
+
+    return;
+
+  }
+
+
+  list.forEach(
+    product => {
+
+      const imageUrl =
+        product.images?.[0] ||
+        product.image ||
+        "https://via.placeholder.com/300";
+
+
+      const favorite =
+        isFavorite(
+          product.id
+        );
+
+
+      const productJson =
+        JSON.stringify(
+          product
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        );
+
+
+      container.innerHTML += `
+
+        <article
+          class="product-card"
+          onclick="openProduct('${product.id}')"
+        >
+
+          <div class="product-image">
+
+            <img
+              src="${imageUrl}"
+              alt="${product.name}"
+            >
+
+
+            <button
+              class="favorite-btn product-favorite-btn ${
+                favorite
+                  ? "active"
+                  : ""
+              }"
+              onclick="toggleFavorite(
+                event,
+                ${productJson}
+              )"
+              aria-label="Add to favorites"
+              title="${
+                favorite
+                  ? "Remove from favorites"
+                  : "Add to favorites"
+              }"
+            >
+
+              <i class="${
+                favorite
+                  ? "fa-solid fa-heart"
+                  : "fa-regular fa-heart"
+              }"></i>
+
+            </button>
+
+          </div>
+
+
+          <div class="product-info">
+
+            <h3>
+
+              ${product.name}
+
+            </h3>
+
+
+            <p class="desc">
+
+              ${product.description || ""}
+
+            </p>
+
+
+            <div class="card-footer">
+
+              <span class="price">
+
+                ₹${product.price}
+
+              </span>
+
+
+              <button
+                class="primary-btn"
+              >
+
+                View Details
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      `;
+
+    }
+  );
+
 }
 
-// Drawer Logic
-const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
-const overlay = document.getElementById("overlay");
+
+/* =========================================================
+   OPEN PRODUCT
+   ========================================================= */
+
+function openProduct(
+  id
+) {
+
+  location.href =
+    "product-details.html?id=" +
+    id;
+
+}
+
+
+/* =========================================================
+   LATEST PRODUCT SLIDER
+   ========================================================= */
+
+const sliderTrack =
+  document.getElementById(
+    "slider-track"
+  );
+
+
+const sliderDots =
+  document.getElementById(
+    "slider-dots"
+  );
+
+
+const sliderPrev =
+  document.getElementById(
+    "sliderPrev"
+  );
+
+
+const sliderNext =
+  document.getElementById(
+    "sliderNext"
+  );
+
+
+let sliderProducts = [];
+
+
+let currentSlide = 0;
+
+
+let sliderTimer;
+
+
+/* =========================================================
+   CREATE SLIDER
+   ========================================================= */
+
+function createLatestSlider(
+  products
+) {
+
+  sliderProducts =
+    products
+      .filter(
+        product =>
+          product.images?.[0] ||
+          product.image
+      )
+      .slice(
+        0,
+        5
+      );
+
+
+  if (
+    sliderProducts.length === 0
+  ) {
+
+    document
+      .querySelector(
+        ".latest-slider-section"
+      )
+      .style.display =
+        "none";
+
+    return;
+
+  }
+
+
+  sliderTrack.innerHTML = "";
+
+
+  sliderDots.innerHTML = "";
+
+
+  sliderProducts.forEach(
+    (
+      product,
+      index
+    ) => {
+
+      const imageUrl =
+        product.images?.[0] ||
+        product.image;
+
+
+      const slide =
+        document.createElement(
+          "div"
+        );
+
+
+      slide.className =
+        "latest-slide";
+
+
+      slide.innerHTML = `
+
+        <img
+          src="${imageUrl}"
+          alt="${product.name}"
+        >
+
+
+        <div class="latest-slide-overlay">
+
+          <div class="latest-slide-info">
+
+            <span class="latest-label">
+
+              NEW ARRIVAL
+
+            </span>
+
+
+            <h2>
+
+              ${product.name}
+
+            </h2>
+
+
+            <span class="latest-price">
+
+              ₹${product.price}
+
+            </span>
+
+          </div>
+
+        </div>
+
+      `;
+
+
+      slide.addEventListener(
+        "click",
+        () => {
+
+          openProduct(
+            product.id
+          );
+
+        }
+      );
+
+
+      sliderTrack.appendChild(
+        slide
+      );
+
+
+      const dot =
+        document.createElement(
+          "button"
+        );
+
+
+      dot.className =
+        "slider-dot";
+
+
+      dot.addEventListener(
+        "click",
+        event => {
+
+          event.stopPropagation();
+
+
+          goToSlide(
+            index
+          );
+
+
+          restartSlider();
+
+        }
+      );
+
+
+      sliderDots.appendChild(
+        dot
+      );
+
+    }
+  );
+
+
+  updateSlider();
+
+
+  startSlider();
+
+}
+
+
+/* =========================================================
+   UPDATE SLIDER
+   ========================================================= */
+
+function updateSlider() {
+
+  sliderTrack.style.transform =
+    `translateX(-${currentSlide * 100}%)`;
+
+
+  const dots =
+    document.querySelectorAll(
+      ".slider-dot"
+    );
+
+
+  dots.forEach(
+    (
+      dot,
+      index
+    ) => {
+
+      dot.classList.toggle(
+        "active",
+        index === currentSlide
+      );
+
+    }
+  );
+
+}
+
+
+function nextSlide() {
+
+  if (
+    sliderProducts.length === 0
+  ) {
+
+    return;
+
+  }
+
+
+  currentSlide =
+    (
+      currentSlide + 1
+    ) %
+    sliderProducts.length;
+
+
+  updateSlider();
+
+}
+
+
+function previousSlide() {
+
+  if (
+    sliderProducts.length === 0
+  ) {
+
+    return;
+
+  }
+
+
+  currentSlide =
+    (
+      currentSlide -
+      1 +
+      sliderProducts.length
+    ) %
+    sliderProducts.length;
+
+
+  updateSlider();
+
+}
+
+
+function goToSlide(
+  index
+) {
+
+  currentSlide =
+    index;
+
+
+  updateSlider();
+
+}
+
+
+function startSlider() {
+
+  clearInterval(
+    sliderTimer
+  );
+
+
+  sliderTimer =
+    setInterval(
+      nextSlide,
+      4500
+    );
+
+}
+
+
+function restartSlider() {
+
+  startSlider();
+
+}
+
+
+sliderNext.addEventListener(
+  "click",
+  event => {
+
+    event.stopPropagation();
+
+
+    nextSlide();
+
+
+    restartSlider();
+
+  }
+);
+
+
+sliderPrev.addEventListener(
+  "click",
+  event => {
+
+    event.stopPropagation();
+
+
+    previousSlide();
+
+
+    restartSlider();
+
+  }
+);
+
+
+/* =========================================================
+   DRAWER
+   ========================================================= */
+
+const menuBtn =
+  document.getElementById(
+    "menuBtn"
+  );
+
+
+const sidebar =
+  document.getElementById(
+    "sidebar"
+  );
+
+
+const overlay =
+  document.getElementById(
+    "overlay"
+  );
+
 
 menuBtn.onclick = () => {
-  sidebar.classList.add("open");
-  overlay.classList.add("show");
+
+  sidebar.classList.add(
+    "open"
+  );
+
+
+  overlay.classList.add(
+    "show"
+  );
+
 };
+
 
 overlay.onclick = () => {
-  sidebar.classList.remove("open");
-  overlay.classList.remove("show");
+
+  sidebar.classList.remove(
+    "open"
+  );
+
+
+  overlay.classList.remove(
+    "show"
+  );
+
 };
 
-function openWhatsApp(msg) {
-  const phone = "916238507436";
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+
+/* =========================================================
+   CONTACT MODAL
+   ========================================================= */
+
+function openContactModal() {
+
+  const modal =
+    document.getElementById(
+      "contactModal"
+    );
+
+
+  modal.classList.add(
+    "show"
+  );
+
+
+  modal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+
+  document.body.classList.add(
+    "policy-modal-open"
+  );
+
+
+  /* Close sidebar when Contact Us is opened */
+
+  sidebar.classList.remove(
+    "open"
+  );
+
+
+  overlay.classList.remove(
+    "show"
+  );
+
 }
+
+
+function closeContactModal() {
+
+  const modal =
+    document.getElementById(
+      "contactModal"
+    );
+
+
+  modal.classList.remove(
+    "show"
+  );
+
+
+  modal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  document.body.classList.remove(
+    "policy-modal-open"
+  );
+
+}
+
+
+/* =========================================================
+   PRIVACY / RETURN POLICY MODAL
+   ========================================================= */
+
+function openPolicyModal(
+  type
+) {
+
+  const modal =
+    document.getElementById(
+      "policyModal"
+    );
+
+
+  const title =
+    document.getElementById(
+      "policyModalTitle"
+    );
+
+
+  const text =
+    document.getElementById(
+      "policyModalText"
+    );
+
+
+  const icon =
+    document.getElementById(
+      "policyModalIcon"
+    );
+
+
+  if (
+    type === "privacy"
+  ) {
+
+    title.textContent =
+      "Privacy Policy";
+
+
+    text.textContent =
+      "We value your data security. Your information is used only to provide and improve your shopping experience.";
+
+
+    icon.className =
+      "fa-solid fa-shield-halved";
+
+  } else {
+
+    title.textContent =
+      "Return Policy";
+
+
+    text.textContent =
+      "We offer 7-day easy returns on all eligible items. Please contact us if you need help with a return.";
+
+
+    icon.className =
+      "fa-solid fa-rotate-left";
+
+  }
+
+
+  modal.classList.add(
+    "show"
+  );
+
+
+  modal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+
+  document.body.classList.add(
+    "policy-modal-open"
+  );
+
+
+  sidebar.classList.remove(
+    "open"
+  );
+
+
+  overlay.classList.remove(
+    "show"
+  );
+
+}
+
+
+function closePolicyModal() {
+
+  const modal =
+    document.getElementById(
+      "policyModal"
+    );
+
+
+  modal.classList.remove(
+    "show"
+  );
+
+
+  modal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  document.body.classList.remove(
+    "policy-modal-open"
+  );
+
+}
+
+
+/* =========================================================
+   ESC KEY
+   ========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key === "Escape"
+    ) {
+
+      closeContactModal();
+
+      closePolicyModal();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   WHATSAPP
+   ========================================================= */
+
+function openWhatsApp(
+  msg
+) {
+
+  const phone =
+    "916238507436";
+
+
+  window.open(
+    `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,
+    "_blank"
+  );
+
+}
+
 </script>
+
+
+<!-- =========================================================
+     CONTACT + POLICY POPUP STYLES
+     ========================================================= -->
+
+<style>
+
+.policy-modal {
+
+  position: fixed;
+
+  inset: 0;
+
+  display: none;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+
+  z-index: 9999;
+
+}
+
+
+.policy-modal.show {
+
+  display: flex;
+
+}
+
+
+.policy-modal-backdrop {
+
+  position: absolute;
+
+  inset: 0;
+
+  background: rgba(
+    30,
+    30,
+    30,
+    0.45
+  );
+
+  backdrop-filter: blur(5px);
+
+  -webkit-backdrop-filter: blur(5px);
+
+  animation:
+    policyFadeIn
+    0.2s
+    ease;
+
+}
+
+
+.policy-modal-card {
+
+  position: relative;
+
+  z-index: 1;
+
+  width: min(
+    430px,
+    100%
+  );
+
+  background: #FFFFFF;
+
+  border:
+    1px solid #E4DED4;
+
+  border-radius: 24px;
+
+  padding:
+    30px
+    28px
+    26px;
+
+  text-align: center;
+
+  box-shadow:
+    0
+    24px
+    70px
+    rgba(
+      45,
+      39,
+      30,
+      0.22
+    );
+
+  animation:
+    policyPopupIn
+    0.25s
+    ease;
+
+}
+
+
+.policy-modal-close {
+
+  position: absolute;
+
+  top: 14px;
+
+  right: 14px;
+
+  width: 38px;
+
+  height: 38px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: #F7F4EE;
+
+  color: #2D2720;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 17px;
+
+  transition:
+    all
+    0.2s
+    ease;
+
+}
+
+
+.policy-modal-close:hover {
+
+  background: var(--primary);
+
+  color: #FFFFFF;
+
+  transform: rotate(90deg);
+
+}
+
+
+.policy-modal-icon {
+
+  width: 62px;
+
+  height: 62px;
+
+  margin:
+    4px
+    auto
+    16px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(
+      89,
+      173,
+      147,
+      0.12
+    );
+
+  color: var(--primary);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 25px;
+
+}
+
+
+.policy-modal-card h2 {
+
+  margin:
+    0
+    0
+    12px;
+
+  color: var(--text);
+
+  font-size: 25px;
+
+}
+
+
+.policy-modal-card p {
+
+  margin:
+    0
+    auto
+    24px;
+
+  max-width: 340px;
+
+  color: var(--muted);
+
+  font-size: 15px;
+
+  line-height: 1.7;
+
+}
+
+
+.policy-modal-ok {
+
+  min-width: 130px;
+
+  padding:
+    12px
+    24px;
+
+  border: none;
+
+  border-radius: 25px;
+
+  background: var(--primary);
+
+  color: #FFFFFF;
+
+  font-family: inherit;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0
+    8px
+    20px
+    rgba(
+      89,
+      173,
+      147,
+      0.20
+    );
+
+  transition:
+    all
+    0.2s
+    ease;
+
+}
+
+
+.policy-modal-ok:hover {
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0
+    10px
+    24px
+    rgba(
+      89,
+      173,
+      147,
+      0.28
+    );
+
+}
+
+
+/* =========================================================
+   CONTACT DETAILS
+   ========================================================= */
+
+.contact-intro {
+
+  margin-bottom: 20px !important;
+
+}
+
+
+.contact-detail {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  text-decoration: none;
+
+  text-align: left;
+
+  padding: 13px;
+
+  margin-bottom: 10px;
+
+  border:
+    1px solid #E9E3DA;
+
+  border-radius: 15px;
+
+  background: #FCFAF6;
+
+  color: inherit;
+
+  transition:
+    all
+    0.2s
+    ease;
+
+}
+
+
+.contact-detail:hover {
+
+  border-color:
+    var(--primary);
+
+  transform:
+    translateY(-1px);
+
+}
+
+
+.contact-detail-icon {
+
+  width: 42px;
+
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background:
+    rgba(
+      89,
+      173,
+      147,
+      0.12
+    );
+
+  color: var(--primary);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+}
+
+
+.contact-detail-text {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+}
+
+
+.contact-detail-text small {
+
+  color: var(--muted);
+
+  font-size: 12px;
+
+}
+
+
+.contact-detail-text strong {
+
+  color: var(--text);
+
+  font-size: 14px;
+
+  word-break: break-word;
+
+}
+
+
+/* =========================================================
+   CONTACT ACTION BUTTONS
+   ========================================================= */
+
+.contact-actions {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      1fr
+    );
+
+  gap: 8px;
+
+  margin:
+    18px
+    0
+    20px;
+
+}
+
+
+.contact-action {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  min-height: 64px;
+
+  border-radius: 14px;
+
+  text-decoration: none;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  transition:
+    all
+    0.2s
+    ease;
+
+}
+
+
+.contact-action i {
+
+  font-size: 19px;
+
+}
+
+
+.contact-action:hover {
+
+  transform:
+    translateY(-2px);
+
+}
+
+
+.call-action {
+
+  background:
+    rgba(
+      89,
+      173,
+      147,
+      0.12
+    );
+
+  color: var(--primary);
+
+}
+
+
+.whatsapp-action {
+
+  background:
+    rgba(
+      89,
+      173,
+      147,
+      0.12
+    );
+
+  color: var(--primary);
+
+}
+
+
+.email-action {
+
+  background:
+    rgba(
+      89,
+      173,
+      147,
+      0.12
+    );
+
+  color: var(--primary);
+
+}
+
+
+.policy-modal-open {
+
+  overflow: hidden;
+
+}
+
+
+@keyframes policyFadeIn {
+
+  from {
+
+    opacity: 0;
+
+  }
+
+  to {
+
+    opacity: 1;
+
+  }
+
+}
+
+
+@keyframes policyPopupIn {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(15px)
+      scale(0.96);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+
+  }
+
+}
+
+
+@media (
+  max-width: 480px
+) {
+
+  .policy-modal-card {
+
+    border-radius: 20px;
+
+    padding:
+      28px
+      20px
+      22px;
+
+  }
+
+
+  .policy-modal-card h2 {
+
+    font-size: 22px;
+
+  }
+
+
+  .policy-modal-card p {
+
+    font-size: 14px;
+
+  }
+
+
+  .contact-detail-text strong {
+
+    font-size: 13px;
+
+  }
+
+
+  .contact-actions {
+
+    gap: 6px;
+
+  }
+
+
+  .contact-action {
+
+    font-size: 11px;
+
+  }
+
+}
+
+</style>
+
 
 </body>
 </html>

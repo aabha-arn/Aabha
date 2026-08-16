@@ -1,239 +1,3749 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
+
   <title>Product Details | Aabha</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    rel="stylesheet"
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet"
+  >
+
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 </head>
 
+
 <body>
+
+
+<!-- =====================================================
+     BACK BUTTON
+     ===================================================== -->
+
+<button
+  class="product-back-button"
+  onclick="goBack()"
+  aria-label="Go back"
+>
+
+  <i class="fa-solid fa-arrow-left"></i>
+
+</button>
+
+
+<!-- =====================================================
+     HEADER / LOGO
+     ===================================================== -->
+
 <header class="site-header">
-  <h1 class="brand" onclick="location.href='index.html'" style="cursor:pointer">Aabha</h1>
+
+  <img
+    src="aabha-logo.png"
+    alt="Aabha"
+    class="brand-logo"
+    onclick="location.href='index.html'"
+    style="cursor:pointer"
+  >
+
 </header>
 
-<div class="container" id="product-box">
-  <p style="text-align:center; padding:100px; color: var(--muted);">
-    <i class="fa-solid fa-circle-notch fa-spin"></i> Loading product details...
+
+<!-- =====================================================
+     PRODUCT
+     ===================================================== -->
+
+<div
+  class="container"
+  id="product-box"
+>
+
+  <p
+    style="
+      text-align:center;
+      padding:100px;
+      color:var(--muted);
+    "
+  >
+
+    <i class="fa-solid fa-circle-notch fa-spin"></i>
+
+    Loading product details...
+
   </p>
+
 </div>
+
+
+<!-- =====================================================
+     REVIEWS
+     ===================================================== -->
 
 <div class="container">
+
   <section class="review-section">
+
     <div class="review-header">
+
       <i class="fa-solid fa-star"></i>
-      <h2>Customer Reviews</h2>
+
+      <h2>
+        Customer Reviews
+      </h2>
+
     </div>
+
+
+    <!-- REVIEW FORM -->
 
     <div class="review-form">
-      <input type="text" id="rev-name" placeholder="Your Name">
-      
+
+      <input
+        type="text"
+        id="rev-name"
+        placeholder="Your Name"
+      >
+
+
+      <!-- STAR RATING -->
+
       <div class="star-rating">
-        <input type="radio" name="stars" id="star5" value="5"><label for="star5">★</label>
-        <input type="radio" name="stars" id="star4" value="4"><label for="star4">★</label>
-        <input type="radio" name="stars" id="star3" value="3"><label for="star3">★</label>
-        <input type="radio" name="stars" id="star2" value="2"><label for="star2">★</label>
-        <input type="radio" name="stars" id="star1" value="1"><label for="star1">★</label>
+
+        <input
+          type="radio"
+          name="stars"
+          id="star5"
+          value="5"
+        >
+
+        <label for="star5">
+          ★
+        </label>
+
+
+        <input
+          type="radio"
+          name="stars"
+          id="star4"
+          value="4"
+        >
+
+        <label for="star4">
+          ★
+        </label>
+
+
+        <input
+          type="radio"
+          name="stars"
+          id="star3"
+          value="3"
+        >
+
+        <label for="star3">
+          ★
+        </label>
+
+
+        <input
+          type="radio"
+          name="stars"
+          id="star2"
+          value="2"
+        >
+
+        <label for="star2">
+          ★
+        </label>
+
+
+        <input
+          type="radio"
+          name="stars"
+          id="star1"
+          value="1"
+        >
+
+        <label for="star1">
+          ★
+        </label>
+
       </div>
-      
-      <textarea id="rev-text" placeholder="Share your feedback..." rows="3"></textarea>
-      <button class="primary-btn" onclick="submitReview()" style="max-width: 220px; margin-top: 15px;">
+
+
+      <!-- REVIEW TEXT -->
+
+      <textarea
+        id="rev-text"
+        placeholder="Share your feedback... (optional)"
+        rows="4"
+      ></textarea>
+
+
+      <!-- REVIEW IMAGE -->
+
+      <div class="review-image-upload">
+
+        <label
+          for="reviewImage"
+          class="review-image-button"
+        >
+
+          <i class="fa-regular fa-image"></i>
+
+          Add a Photo
+
+        </label>
+
+
+        <input
+          type="file"
+          id="reviewImage"
+          accept="image/*"
+          onchange="handleReviewImage(event)"
+        >
+
+
+        <p class="review-image-hint">
+
+          Add a photo of the product if you want.
+
+        </p>
+
+
+        <div
+          id="reviewImagePreview"
+          class="review-image-preview"
+        ></div>
+
+      </div>
+
+
+      <!-- POST REVIEW -->
+
+      <button
+        class="primary-btn"
+        onclick="submitReview()"
+        style="
+          max-width:220px;
+          margin-top:15px;
+        "
+      >
+
         Post Review
+
       </button>
+
     </div>
 
-    <div id="reviews-display" class="reviews-list">
-      <p class="muted" style="text-align:center;">Loading feedback...</p>
+
+    <!-- REVIEWS DISPLAY -->
+
+    <div
+      id="reviews-display"
+      class="reviews-list"
+    >
+
+      <p
+        class="muted"
+        style="text-align:center;"
+      >
+
+        Loading feedback...
+
+      </p>
+
     </div>
+
   </section>
+
 </div>
 
+
 <script>
-// --- FIREBASE CONFIGURATION ---
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+function goBack() {
+
+  if (
+    window.history.length > 1
+  ) {
+
+    window.history.back();
+
+  } else {
+
+    window.location.href =
+      "index.html";
+
+  }
+
+}
+
+
+/* =========================================================
+   FIREBASE
+   ========================================================= */
+
 const firebaseConfig = {
-  apiKey: "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
-  authDomain: "aabha-e46fa.firebaseapp.com",
-  projectId: "aabha-e46fa"
+
+  apiKey:
+    "AIzaSyAskFF6Xn-ZfYSxd5hUZkNG-7BIhAH9Lj4",
+
+  authDomain:
+    "aabha-e46fa.firebaseapp.com",
+
+  projectId:
+    "aabha-e46fa"
+
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 
-const urlParams = new URLSearchParams(window.location.search);
-const productId = urlParams.get("id");
+firebase.initializeApp(
+  firebaseConfig
+);
+
+
+const db =
+  firebase.firestore();
+
+
+/* =========================================================
+   PRODUCT
+   ========================================================= */
+
+const urlParams =
+  new URLSearchParams(
+    window.location.search
+  );
+
+
+const productId =
+  urlParams.get("id");
+
+
 let currentProduct = null;
 
-if (!productId) {
-    document.getElementById("product-box").innerHTML = "<p style='text-align:center; padding:50px;'>No product selected.</p>";
-} else {
-    loadProductData();
+
+/* =========================================================
+   SELECTED SIZE
+   ========================================================= */
+
+let selectedSize = null;
+
+
+/* =========================================================
+   REVIEW IMAGE
+   ========================================================= */
+
+let reviewImageData = null;
+
+
+/* =========================================================
+   EDITING REVIEW
+   ========================================================= */
+
+let editingReviewId = null;
+
+let editingReviewExistingImage = null;
+
+
+/* =========================================================
+   REVIEWER ID
+   ========================================================= */
+
+const REVIEWER_ID_KEY =
+  "aabhaReviewerId";
+
+
+function getReviewerId() {
+
+  let reviewerId =
+    localStorage.getItem(
+      REVIEWER_ID_KEY
+    );
+
+
+  if (!reviewerId) {
+
+    reviewerId =
+      "reviewer_" +
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString(36)
+        .substring(2, 15);
+
+
+    localStorage.setItem(
+      REVIEWER_ID_KEY,
+      reviewerId
+    );
+
+  }
+
+
+  return reviewerId;
+
 }
 
-// --- CORE FUNCTIONS ---
+
+const reviewerId =
+  getReviewerId();
+
+
+/* =========================================================
+   FAVORITES
+   ========================================================= */
+
+const FAVORITES_KEY =
+  "aabhaFavorites";
+
+
+function getFavorites() {
+
+  return JSON.parse(
+    localStorage.getItem(
+      FAVORITES_KEY
+    ) || "[]"
+  );
+
+}
+
+
+function saveFavorites(
+  favorites
+) {
+
+  localStorage.setItem(
+    FAVORITES_KEY,
+    JSON.stringify(
+      favorites
+    )
+  );
+
+}
+
+
+function isFavorite() {
+
+  const favorites =
+    getFavorites();
+
+
+  return favorites.some(
+    product =>
+      product.id === productId
+  );
+
+}
+
+
+function toggleFavorite() {
+
+  if (!currentProduct) {
+
+    return;
+
+  }
+
+
+  let favorites =
+    getFavorites();
+
+
+  const existingIndex =
+    favorites.findIndex(
+      product =>
+        product.id === productId
+    );
+
+
+  if (
+    existingIndex !== -1
+  ) {
+
+    favorites.splice(
+      existingIndex,
+      1
+    );
+
+  } else {
+
+    favorites.push({
+
+      id: productId,
+
+      name:
+        currentProduct.name,
+
+      price:
+        currentProduct.price,
+
+      description:
+        currentProduct.description || "",
+
+      image:
+        currentProduct.images?.[0] ||
+        currentProduct.image ||
+        ""
+
+    });
+
+  }
+
+
+  saveFavorites(
+    favorites
+  );
+
+
+  updateFavoriteButton();
+
+}
+
+
+/* =========================================================
+   UPDATE FAVORITE BUTTON
+   ========================================================= */
+
+function updateFavoriteButton() {
+
+  const button =
+    document.getElementById(
+      "detailsFavoriteBtn"
+    );
+
+
+  if (!button) {
+
+    return;
+
+  }
+
+
+  const favorite =
+    isFavorite();
+
+
+  if (favorite) {
+
+    button.classList.add(
+      "active"
+    );
+
+
+    button.innerHTML = `
+
+      <i class="fa-solid fa-heart"></i>
+
+      Remove from Favorites
+
+    `;
+
+  } else {
+
+    button.classList.remove(
+      "active"
+    );
+
+
+    button.innerHTML = `
+
+      <i class="fa-regular fa-heart"></i>
+
+      Add to Favorites
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD PRODUCT
+   ========================================================= */
+
+if (!productId) {
+
+  document.getElementById(
+    "product-box"
+  ).innerHTML = `
+
+    <p
+      style="
+        text-align:center;
+        padding:50px;
+      "
+    >
+
+      No product selected.
+
+    </p>
+
+  `;
+
+} else {
+
+  loadProductData();
+
+}
+
+
+/* =========================================================
+   LOAD PRODUCT DATA
+   ========================================================= */
 
 function loadProductData() {
-  db.collection("products").doc(productId).get().then(doc => {
-    if (!doc.exists) {
-      document.getElementById("product-box").innerHTML = "<p style='text-align:center; padding:50px;'>Product not found.</p>";
-      return;
-    }
-    currentProduct = doc.data();
-    renderProduct();
-    loadReviews(); 
-  }).catch(err => {
-    console.error("Error loading product:", err);
-    document.getElementById("product-box").innerText = "Error loading details.";
-  });
-}
 
-function renderProduct() {
-  let rawImages = [];
-  if (Array.isArray(currentProduct.images)) rawImages = [...currentProduct.images];
-  if (currentProduct.image) rawImages.push(currentProduct.image);
-  
-  const uniqueImages = [...new Set(rawImages)].filter(url => url && url.trim() !== "");
-  const finalImages = uniqueImages.length > 0 ? uniqueImages : ["https://via.placeholder.com/500"];
+  db.collection("products")
+    .doc(productId)
+    .get()
 
-  const thumbsHtml = finalImages.length > 1 
-    ? `<div class="thumbs">${finalImages.map(imgUrl => `
-        <img src="${imgUrl}" onclick="document.getElementById('mainImg').src='${imgUrl}'" alt="thumbnail">
-      `).join("")}</div>`
-    : "";
+    .then(doc => {
 
-  document.getElementById("product-box").innerHTML = `
-    <div class="product-layout">
-      <div class="image-section">
-        ${thumbsHtml}
-        <img id="mainImg" src="${finalImages[0]}" class="main-img" alt="${currentProduct.name}">
-      </div>
-      <div class="details">
-        <h2>${currentProduct.name}</h2>
-        <p class="desc">${currentProduct.description || "Sophisticated design crafted for style and comfort."}</p>
-        <div class="price">₹${currentProduct.price}</div>
-        
-        <div class="actions">
-          <button class="primary-btn" onclick="buyNow()">
-            <i class="fa-brands fa-whatsapp"></i> Buy Now
-          </button>
-          <button class="primary-btn secondary-btn" onclick="addToGuestCart()">
-            <i class="fa-solid fa-cart-plus"></i> Add to Cart
-          </button>
-        </div>
-      </div>
-    </div>
-  `;
-}
+      if (!doc.exists) {
 
-function buyNow() {
-  const msg = encodeURIComponent(`*Order Inquiry*\nProduct: ${currentProduct.name}\nPrice: ₹${currentProduct.price}\nLink: ${window.location.href}`);
-  window.open(`https://wa.me/916238507436?text=${msg}`, "_blank");
-}
+        document.getElementById(
+          "product-box"
+        ).innerHTML = `
 
-function addToGuestCart() {
-  let cart = JSON.parse(localStorage.getItem("guestCart") || "[]");
-  cart.push({ 
-    id: productId, 
-    name: currentProduct.name, 
-    price: currentProduct.price, 
-    image: currentProduct.image || (currentProduct.images ? currentProduct.images[0] : "") 
-  });
-  localStorage.setItem("guestCart", JSON.stringify(cart));
-  alert("Added to cart! 🛒");
-}
+          <p
+            style="
+              text-align:center;
+              padding:50px;
+            "
+          >
 
-// --- FIXED REVIEW LOGIC ---
+            Product not found.
 
-function submitReview() {
-  const name = document.getElementById("rev-name").value.trim();
-  const text = document.getElementById("rev-text").value.trim();
-  const rating = document.querySelector('input[name="stars"]:checked')?.value;
+          </p>
 
-  if (!name || !text || !rating) {
-    alert("Please provide your name, a rating, and a comment.");
-    return;
-  }
+        `;
 
-  db.collection("reviews").add({
-    productId: productId,
-    name: name,
-    comment: text,
-    rating: Number(rating),
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(() => {
-    alert("Review posted successfully! ✨");
-    document.getElementById("rev-name").value = "";
-    document.getElementById("rev-text").value = "";
-    document.querySelectorAll('input[name="stars"]').forEach(el => el.checked = false);
-  }).catch(err => {
-    console.error(err);
-  });
-}
-
-function loadReviews() {
-  // We removed .orderBy("createdAt", "desc") temporarily 
-  // This allows reviews to show immediately without an index error.
-  db.collection("reviews")
-    .where("productId", "==", productId) 
-    .onSnapshot(snap => {
-      const display = document.getElementById("reviews-display");
-      display.innerHTML = "";
-      
-      if (snap.empty) {
-        display.innerHTML = "<p class='muted' style='text-align:center;'>No reviews yet. Be the first to share your thoughts!</p>";
         return;
+
       }
 
-      snap.forEach(doc => {
-        const r = doc.data();
-        const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
-        display.innerHTML += `
-          <div class="review-item" style="background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--primary);">
-            <div class="review-top" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-              <strong style="color: #fff;">${r.name}</strong>
-              <span class="stars-text" style="color: var(--primary);">${stars}</span>
-            </div>
-            <p style="color: #ccc; margin: 0;">${r.comment}</p>
-          </div>
-        `;
-      });
-    }, err => {
-      console.error("Firestore Error:", err);
-      document.getElementById("reviews-display").innerHTML = "<p class='muted'>Failed to load reviews.</p>";
+
+      currentProduct =
+        doc.data();
+
+
+      renderProduct();
+
+      loadReviews();
+
+    })
+
+    .catch(err => {
+
+      console.error(
+        "Error loading product:",
+        err
+      );
+
+
+      document.getElementById(
+        "product-box"
+      ).innerText =
+        "Error loading details.";
+
     });
+
 }
+
+
+/* =========================================================
+   GET PRODUCT SIZES
+   ========================================================= */
+
+function getProductSizes() {
+
+  if (
+    Array.isArray(
+      currentProduct.sizes
+    )
+  ) {
+
+    return currentProduct.sizes
+      .map(
+        size =>
+          String(size).trim()
+      )
+      .filter(
+        size =>
+          size !== ""
+      );
+
+  }
+
+
+  if (
+    typeof currentProduct.sizes ===
+    "string"
+  ) {
+
+    return currentProduct.sizes
+      .split(",")
+      .map(
+        size =>
+          size.trim()
+      )
+      .filter(
+        size =>
+          size !== ""
+      );
+
+  }
+
+
+  return [
+
+    "XXS",
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL",
+    "XXXL"
+
+  ];
+
+}
+
+
+/* =========================================================
+   SELECT SIZE
+   ========================================================= */
+
+function selectSize(size) {
+
+  selectedSize =
+    size;
+
+
+  document
+    .querySelectorAll(
+      ".size-option"
+    )
+    .forEach(
+      button => {
+
+        button.classList.toggle(
+          "selected",
+          button.dataset.size === size
+        );
+
+      }
+    );
+
+
+  const selectedText =
+    document.getElementById(
+      "selectedSizeText"
+    );
+
+
+  if (selectedText) {
+
+    selectedText.textContent =
+      "Selected: " + size;
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER SIZE OPTIONS
+   ========================================================= */
+
+function renderSizeOptions() {
+
+  const sizes =
+    getProductSizes();
+
+
+  return `
+
+    <div class="size-section">
+
+      <div class="size-header">
+
+        <span class="size-title">
+          Select Size
+        </span>
+
+        <span
+          class="selected-size-text"
+          id="selectedSizeText"
+        >
+
+          Select a size
+
+        </span>
+
+      </div>
+
+
+      <div class="size-options">
+
+        ${sizes
+          .map(
+            size => `
+
+              <button
+                type="button"
+                class="size-option"
+                data-size="${size}"
+                onclick="selectSize('${size}')"
+              >
+
+                ${size}
+
+              </button>
+
+            `
+          )
+          .join("")}
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   RENDER PRODUCT
+   ========================================================= */
+
+function renderProduct() {
+
+  let rawImages = [];
+
+
+  if (
+    Array.isArray(
+      currentProduct.images
+    )
+  ) {
+
+    rawImages =
+      [
+        ...currentProduct.images
+      ];
+
+  }
+
+
+  if (
+    currentProduct.image
+  ) {
+
+    rawImages.push(
+      currentProduct.image
+    );
+
+  }
+
+
+  const uniqueImages =
+    [
+      ...new Set(
+        rawImages
+      )
+    ]
+    .filter(
+      url =>
+        url &&
+        url.trim() !== ""
+    );
+
+
+  const finalImages =
+    uniqueImages.length > 0
+      ? uniqueImages
+      : [
+          "https://via.placeholder.com/500"
+        ];
+
+
+  const thumbsHtml =
+    finalImages.length > 1
+
+      ? `
+
+        <div class="thumbs">
+
+          ${finalImages
+            .map(
+              imgUrl => `
+
+                <img
+                  src="${imgUrl}"
+                  onclick="
+                    document.getElementById(
+                      'mainImg'
+                    ).src='${imgUrl}'
+                  "
+                  alt="thumbnail"
+                >
+
+              `
+            )
+            .join("")}
+
+        </div>
+
+      `
+
+      : "";
+
+
+  const sizeOptionsHtml =
+    renderSizeOptions();
+
+
+  document.getElementById(
+    "product-box"
+  ).innerHTML = `
+
+    <div class="product-layout">
+
+
+      <div class="image-section">
+
+        ${thumbsHtml}
+
+
+        <img
+          id="mainImg"
+          src="${finalImages[0]}"
+          class="main-img"
+          alt="${currentProduct.name}"
+        >
+
+      </div>
+
+
+      <div class="details">
+
+        <h2>
+          ${currentProduct.name}
+        </h2>
+
+
+        <p class="desc">
+
+          ${
+            currentProduct.description ||
+            "Sophisticated design crafted for style and comfort."
+          }
+
+        </p>
+
+
+        <div class="price">
+
+          ₹${currentProduct.price}
+
+        </div>
+
+
+        ${sizeOptionsHtml}
+
+
+        <div class="actions">
+
+
+          <button
+            class="primary-btn"
+            onclick="buyNow()"
+          >
+
+            <i class="fa-brands fa-whatsapp"></i>
+
+            Buy Now
+
+          </button>
+
+
+          <button
+            id="detailsFavoriteBtn"
+            class="primary-btn favorite-details-btn"
+            onclick="toggleFavorite()"
+          >
+
+            <i class="fa-regular fa-heart"></i>
+
+            Add to Favorites
+
+          </button>
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  updateFavoriteButton();
+
+}
+
+
+/* =========================================================
+   BUY NOW
+   ========================================================= */
+
+function buyNow() {
+
+  if (!selectedSize) {
+
+    alert(
+      "Please select a size first."
+    );
+
+    return;
+
+  }
+
+
+  let message =
+
+    `*Order Inquiry*
+Product: ${currentProduct.name}
+Price: ₹${currentProduct.price}
+Size: ${selectedSize}
+Link: ${window.location.href}`;
+
+
+  const msg =
+    encodeURIComponent(
+      message
+    );
+
+
+  window.open(
+    `https://wa.me/916238507436?text=${msg}`,
+    "_blank"
+  );
+
+}
+
+
+/* =========================================================
+   REVIEW IMAGE HANDLER
+   ========================================================= */
+
+function handleReviewImage(
+  event
+) {
+
+  const file =
+    event.target.files[0];
+
+
+  if (!file) {
+
+    return;
+
+  }
+
+
+  if (
+    !file.type.startsWith(
+      "image/"
+    )
+  ) {
+
+    alert(
+      "Please select an image file."
+    );
+
+    event.target.value = "";
+
+    return;
+
+  }
+
+
+  if (
+    file.size >
+    10 * 1024 * 1024
+  ) {
+
+    alert(
+      "Please choose an image smaller than 10 MB."
+    );
+
+    event.target.value = "";
+
+    return;
+
+  }
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload = function(e) {
+
+    const image =
+      new Image();
+
+
+    image.onload =
+      function() {
+
+        const maxWidth =
+          900;
+
+        const maxHeight =
+          900;
+
+
+        let width =
+          image.width;
+
+        let height =
+          image.height;
+
+
+        if (
+          width >
+          maxWidth
+        ) {
+
+          height =
+            Math.round(
+              height *
+              (maxWidth /
+                width)
+            );
+
+          width =
+            maxWidth;
+
+        }
+
+
+        if (
+          height >
+          maxHeight
+        ) {
+
+          width =
+            Math.round(
+              width *
+              (maxHeight /
+                height)
+            );
+
+          height =
+            maxHeight;
+
+        }
+
+
+        const canvas =
+          document.createElement(
+            "canvas"
+          );
+
+
+        canvas.width =
+          width;
+
+        canvas.height =
+          height;
+
+
+        const context =
+          canvas.getContext(
+            "2d"
+          );
+
+
+        context.drawImage(
+          image,
+          0,
+          0,
+          width,
+          height
+        );
+
+
+        reviewImageData =
+          canvas.toDataURL(
+            "image/jpeg",
+            0.72
+          );
+
+
+        const preview =
+          document.getElementById(
+            "reviewImagePreview"
+          );
+
+
+        preview.innerHTML = `
+
+          <div class="review-preview-wrapper">
+
+            <img
+              src="${reviewImageData}"
+              alt="Review image preview"
+            >
+
+
+            <button
+              type="button"
+              class="remove-review-image"
+              onclick="removeReviewImage()"
+              title="Remove image"
+            >
+
+              <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+          </div>
+
+        `;
+
+      };
+
+
+    image.src =
+      e.target.result;
+
+  };
+
+
+  reader.readAsDataURL(
+    file
+  );
+
+}
+
+
+/* =========================================================
+   REMOVE REVIEW IMAGE
+   ========================================================= */
+
+function removeReviewImage() {
+
+  reviewImageData =
+    null;
+
+
+  const input =
+    document.getElementById(
+      "reviewImage"
+    );
+
+
+  const preview =
+    document.getElementById(
+      "reviewImagePreview"
+    );
+
+
+  if (input) {
+
+    input.value = "";
+
+  }
+
+
+  if (preview) {
+
+    preview.innerHTML =
+      "";
+
+  }
+
+}
+
+
+/* =========================================================
+   SUBMIT REVIEW
+   ========================================================= */
+
+function submitReview() {
+
+  const name =
+    document
+      .getElementById(
+        "rev-name"
+      )
+      .value
+      .trim();
+
+
+  const text =
+    document
+      .getElementById(
+        "rev-text"
+      )
+      .value
+      .trim();
+
+
+  const rating =
+    document.querySelector(
+      'input[name="stars"]:checked'
+    )?.value;
+
+
+  if (
+    !name ||
+    !rating
+  ) {
+
+    alert(
+      "Please provide your name and a rating."
+    );
+
+    return;
+
+  }
+
+
+  if (
+    !text &&
+    !reviewImageData
+  ) {
+
+    alert(
+      "Please write a review or add a photo."
+    );
+
+    return;
+
+  }
+
+
+  const reviewData = {
+
+    productId:
+      productId,
+
+    name:
+      name,
+
+    comment:
+      text,
+
+    rating:
+      Number(rating),
+
+    ownerId:
+      reviewerId,
+
+    createdAt:
+      firebase.firestore
+        .FieldValue
+        .serverTimestamp()
+
+  };
+
+
+  if (
+    reviewImageData
+  ) {
+
+    reviewData.image =
+      reviewImageData;
+
+  }
+
+
+  db.collection("reviews")
+    .add(
+      reviewData
+    )
+
+    .then(() => {
+
+      alert(
+        "Review posted successfully! ✨"
+      );
+
+
+      clearReviewForm();
+
+    })
+
+    .catch(err => {
+
+      console.error(
+        "Error posting review:",
+        err
+      );
+
+
+      alert(
+        "Unable to post review. Please try again."
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   CLEAR REVIEW FORM
+   ========================================================= */
+
+function clearReviewForm() {
+
+  document.getElementById(
+    "rev-name"
+  ).value = "";
+
+
+  document.getElementById(
+    "rev-text"
+  ).value = "";
+
+
+  document
+    .querySelectorAll(
+      'input[name="stars"]'
+    )
+    .forEach(
+      el =>
+        el.checked = false
+    );
+
+
+  removeReviewImage();
+
+}
+
+
+/* =========================================================
+   REVIEW MENU
+   ========================================================= */
+
+function toggleReviewMenu(
+  reviewId
+) {
+
+  const menu =
+    document.getElementById(
+      "review-menu-" + reviewId
+    );
+
+
+  if (!menu) {
+
+    return;
+
+  }
+
+
+  document
+    .querySelectorAll(
+      ".review-menu"
+    )
+    .forEach(
+      otherMenu => {
+
+        if (
+          otherMenu !== menu
+        ) {
+
+          otherMenu.classList.remove(
+            "show"
+          );
+
+        }
+
+      }
+    );
+
+
+  menu.classList.toggle(
+    "show"
+  );
+
+}
+
+
+/* =========================================================
+   CLOSE MENUS
+   ========================================================= */
+
+document.addEventListener(
+  "click",
+  function(event) {
+
+    if (
+      !event.target.closest(
+        ".review-menu-container"
+      )
+    ) {
+
+      document
+        .querySelectorAll(
+          ".review-menu"
+        )
+        .forEach(
+          menu =>
+            menu.classList.remove(
+              "show"
+            )
+        );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   EDIT REVIEW
+   ========================================================= */
+
+function editReview(
+  reviewId
+) {
+
+  document
+    .querySelectorAll(
+      ".review-menu"
+    )
+    .forEach(
+      menu =>
+        menu.classList.remove(
+          "show"
+        )
+    );
+
+
+  db.collection("reviews")
+    .doc(reviewId)
+    .get()
+
+    .then(doc => {
+
+      if (!doc.exists) {
+
+        alert(
+          "Review no longer exists."
+        );
+
+        return;
+
+      }
+
+
+      const review =
+        doc.data();
+
+
+      if (
+        !review.ownerId
+      ) {
+
+        alert(
+          "This is an older review and its owner cannot be verified."
+        );
+
+        return;
+
+      }
+
+
+      if (
+        review.ownerId !==
+        reviewerId
+      ) {
+
+        alert(
+          "You can only edit your own review."
+        );
+
+        return;
+
+      }
+
+
+      editingReviewId =
+        reviewId;
+
+
+      document.getElementById(
+        "rev-name"
+      ).value =
+        review.name ||
+        "";
+
+
+      document.getElementById(
+        "rev-text"
+      ).value =
+        review.comment ||
+        "";
+
+
+      document
+        .querySelectorAll(
+          'input[name="stars"]'
+        )
+        .forEach(
+          radio => {
+
+            radio.checked =
+              Number(
+                radio.value
+              ) ===
+              Number(
+                review.rating
+              );
+
+          }
+        );
+
+
+      reviewImageData =
+        review.image ||
+        null;
+
+
+      const preview =
+        document.getElementById(
+          "reviewImagePreview"
+        );
+
+
+      if (
+        review.image
+      ) {
+
+        preview.innerHTML = `
+
+          <div class="review-preview-wrapper">
+
+            <img
+              src="${review.image}"
+              alt="Current review image"
+            >
+
+
+            <button
+              type="button"
+              class="remove-review-image"
+              onclick="removeReviewImage()"
+            >
+
+              <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+          </div>
+
+        `;
+
+      } else {
+
+        preview.innerHTML =
+          "";
+
+      }
+
+
+      const postButton =
+        document.querySelector(
+          ".review-form > .primary-btn"
+        );
+
+
+      postButton.innerHTML = `
+
+        <i class="fa-solid fa-check"></i>
+
+        Update Review
+
+      `;
+
+
+      postButton.onclick =
+        updateReview;
+
+
+      let cancelButton =
+        document.getElementById(
+          "cancelEditButton"
+        );
+
+
+      if (!cancelButton) {
+
+        cancelButton =
+          document.createElement(
+            "button"
+          );
+
+
+        cancelButton.id =
+          "cancelEditButton";
+
+
+        cancelButton.type =
+          "button";
+
+
+        cancelButton.className =
+          "cancel-edit-button";
+
+
+        cancelButton.innerHTML = `
+
+          <i class="fa-solid fa-xmark"></i>
+
+          Cancel Edit
+
+        `;
+
+
+        cancelButton.onclick =
+          cancelEditReview;
+
+
+        postButton.parentNode.insertBefore(
+          cancelButton,
+          postButton
+        );
+
+      }
+
+
+      document
+        .querySelector(
+          ".review-section"
+        )
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+
+    })
+
+    .catch(err => {
+
+      console.error(
+        "Error loading review:",
+        err
+      );
+
+
+      alert(
+        "Unable to edit this review."
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   UPDATE REVIEW
+   ========================================================= */
+
+function updateReview() {
+
+  if (
+    !editingReviewId
+  ) {
+
+    return;
+
+  }
+
+
+  const name =
+    document
+      .getElementById(
+        "rev-name"
+      )
+      .value
+      .trim();
+
+
+  const text =
+    document
+      .getElementById(
+        "rev-text"
+      )
+      .value
+      .trim();
+
+
+  const rating =
+    document.querySelector(
+      'input[name="stars"]:checked'
+    )?.value;
+
+
+  if (
+    !name ||
+    !rating
+  ) {
+
+    alert(
+      "Please provide your name and a rating."
+    );
+
+    return;
+
+  }
+
+
+  if (
+    !text &&
+    !reviewImageData
+  ) {
+
+    alert(
+      "Please write a review or add a photo."
+    );
+
+    return;
+
+  }
+
+
+  db.collection("reviews")
+    .doc(editingReviewId)
+    .get()
+
+    .then(doc => {
+
+      if (!doc.exists) {
+
+        throw new Error(
+          "Review not found."
+        );
+
+      }
+
+
+      const review =
+        doc.data();
+
+
+      if (
+        review.ownerId !==
+        reviewerId
+      ) {
+
+        throw new Error(
+          "You are not allowed to edit this review."
+        );
+
+      }
+
+
+      const updateData = {
+
+        name:
+          name,
+
+        comment:
+          text,
+
+        rating:
+          Number(rating),
+
+        updatedAt:
+          firebase.firestore
+            .FieldValue
+            .serverTimestamp()
+
+      };
+
+
+      if (
+        reviewImageData
+      ) {
+
+        updateData.image =
+          reviewImageData;
+
+      } else {
+
+        updateData.image =
+          firebase.firestore
+            .FieldValue
+            .delete();
+
+      }
+
+
+      return db.collection(
+        "reviews"
+      )
+      .doc(editingReviewId)
+      .update(
+        updateData
+      );
+
+    })
+
+    .then(() => {
+
+      alert(
+        "Review updated successfully! ✨"
+      );
+
+
+      cancelEditReview();
+
+    })
+
+    .catch(err => {
+
+      console.error(
+        "Error updating review:",
+        err
+      );
+
+
+      alert(
+        err.message ||
+        "Unable to update review."
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   CANCEL EDIT
+   ========================================================= */
+
+function cancelEditReview() {
+
+  editingReviewId =
+    null;
+
+
+  clearReviewForm();
+
+
+  const postButton =
+    document.querySelector(
+      ".review-form > .primary-btn"
+    );
+
+
+  if (postButton) {
+
+    postButton.innerHTML =
+      "Post Review";
+
+
+    postButton.onclick =
+      submitReview;
+
+  }
+
+
+  const cancelButton =
+    document.getElementById(
+      "cancelEditButton"
+    );
+
+
+  if (cancelButton) {
+
+    cancelButton.remove();
+
+  }
+
+}
+
+
+/* =========================================================
+   DELETE REVIEW
+   ========================================================= */
+
+function deleteReview(
+  reviewId
+) {
+
+  document
+    .querySelectorAll(
+      ".review-menu"
+    )
+    .forEach(
+      menu =>
+        menu.classList.remove(
+          "show"
+        )
+    );
+
+
+  db.collection("reviews")
+    .doc(reviewId)
+    .get()
+
+    .then(doc => {
+
+      if (!doc.exists) {
+
+        alert(
+          "Review no longer exists."
+        );
+
+        return;
+
+      }
+
+
+      const review =
+        doc.data();
+
+
+      if (
+        !review.ownerId
+      ) {
+
+        alert(
+          "This is an older review and its owner cannot be verified."
+        );
+
+        return;
+
+      }
+
+
+      if (
+        review.ownerId !==
+        reviewerId
+      ) {
+
+        alert(
+          "You can only delete your own review."
+        );
+
+        return;
+
+      }
+
+
+      const confirmed =
+        confirm(
+          "Are you sure you want to delete this review?"
+        );
+
+
+      if (!confirmed) {
+
+        return;
+
+      }
+
+
+      return db.collection(
+        "reviews"
+      )
+      .doc(reviewId)
+      .delete();
+
+    })
+
+    .then(() => {
+
+      console.log(
+        "Review delete operation completed."
+      );
+
+    })
+
+    .catch(err => {
+
+      console.error(
+        "Error deleting review:",
+        err
+      );
+
+
+      alert(
+        err.message ||
+        "Unable to delete review."
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   LOAD REVIEWS
+   ========================================================= */
+
+function loadReviews() {
+
+  db.collection("reviews")
+    .where(
+      "productId",
+      "==",
+      productId
+    )
+
+    .onSnapshot(
+
+      snap => {
+
+        const display =
+          document.getElementById(
+            "reviews-display"
+          );
+
+
+        display.innerHTML =
+          "";
+
+
+        if (
+          snap.empty
+        ) {
+
+          display.innerHTML = `
+
+            <p
+              class="muted"
+              style="text-align:center;"
+            >
+
+              No reviews yet.
+              Be the first to share
+              your thoughts!
+
+            </p>
+
+          `;
+
+          return;
+
+        }
+
+
+        snap.forEach(
+          doc => {
+
+            const r =
+              doc.data();
+
+
+            const reviewId =
+              doc.id;
+
+
+            const stars =
+              "★".repeat(
+                r.rating
+              ) +
+              "☆".repeat(
+                5 - r.rating
+              );
+
+
+            const menuHtml = `
+
+              <div
+                class="review-menu-container"
+              >
+
+                <button
+                  type="button"
+                  class="review-menu-button"
+                  onclick="
+                    event.stopPropagation();
+                    toggleReviewMenu('${reviewId}')
+                  "
+                  aria-label="Review options"
+                >
+
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+
+                </button>
+
+
+                <div
+                  class="review-menu"
+                  id="review-menu-${reviewId}"
+                >
+
+                  <button
+                    type="button"
+                    onclick="
+                      event.stopPropagation();
+                      editReview('${reviewId}')
+                    "
+                  >
+
+                    <i class="fa-solid fa-pen"></i>
+
+                    Edit Review
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    class="delete-review-option"
+                    onclick="
+                      event.stopPropagation();
+                      deleteReview('${reviewId}')
+                    "
+                  >
+
+                    <i class="fa-solid fa-trash"></i>
+
+                    Delete Review
+
+                  </button>
+
+                </div>
+
+              </div>
+
+            `;
+
+
+            const commentHtml =
+              r.comment
+                ? `
+
+                  <p class="review-comment">
+
+                    ${escapeHtml(
+                      r.comment
+                    )}
+
+                  </p>
+
+                `
+                : "";
+
+
+            const imageHtml =
+              r.image
+                ? `
+
+                  <div class="review-photo">
+
+                    <img
+                      src="${r.image}"
+                      alt="Customer review photo"
+                      onclick="openReviewImage('${r.image}')"
+                    >
+
+                  </div>
+
+                `
+                : "";
+
+
+            display.innerHTML += `
+
+              <div
+                class="review-item"
+              >
+
+                <div class="review-top">
+
+                  <strong>
+
+                    ${escapeHtml(
+                      r.name
+                    )}
+
+                  </strong>
+
+
+                  <span class="stars-text">
+
+                    ${stars}
+
+                  </span>
+
+
+                  ${menuHtml}
+
+                </div>
+
+
+                ${commentHtml}
+
+
+                ${imageHtml}
+
+              </div>
+
+            `;
+
+          }
+        );
+
+      },
+
+      err => {
+
+        console.error(
+          "Firestore Error:",
+          err
+        );
+
+
+        document.getElementById(
+          "reviews-display"
+        ).innerHTML = `
+
+          <p class="muted">
+
+            Failed to load reviews.
+
+          </p>
+
+        `;
+
+      }
+
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(
+  text
+) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+
+  div.textContent =
+    text;
+
+
+  return div.innerHTML;
+
+}
+
+
+/* =========================================================
+   OPEN REVIEW IMAGE
+   ========================================================= */
+
+function openReviewImage(
+  image
+) {
+
+  const viewer =
+    document.createElement(
+      "div"
+    );
+
+
+  viewer.className =
+    "review-image-viewer";
+
+
+  viewer.innerHTML = `
+
+    <div class="review-image-viewer-content">
+
+      <button
+        class="review-image-close"
+        onclick="
+          this.parentElement.parentElement.remove()
+        "
+      >
+
+        <i class="fa-solid fa-xmark"></i>
+
+      </button>
+
+
+      <img
+        src="${image}"
+        alt="Customer review"
+      >
+
+    </div>
+
+  `;
+
+
+  viewer.addEventListener(
+    "click",
+    function(event) {
+
+      if (
+        event.target ===
+        viewer
+      ) {
+
+        viewer.remove();
+
+      }
+
+    }
+  );
+
+
+  document.body.appendChild(
+    viewer
+  );
+
+}
+
 </script>
 
+
 <style>
-  .product-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; margin-top: 20px; align-items: start; }
-  .image-section { display: flex; gap: 15px; }
-  .thumbs { display: flex; flex-direction: column; gap: 12px; width: 85px; flex-shrink: 0; }
-  .thumbs img { width: 85px; height: 85px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 2px solid transparent; background: #1a1a1a; }
-  .thumbs img:hover { border-color: var(--primary); }
-  .main-img { width: 100%; max-height: 550px; object-fit: cover; border-radius: 20px; background: #000; }
-  .details h2 { font-size: 32px; margin-bottom: 10px; color: var(--text); }
-  .details .desc { font-size: 16px; color: var(--muted); margin-bottom: 25px; line-height: 1.6; }
-  .details .price { font-size: 36px; font-weight: 700; color: var(--primary); margin-bottom: 30px; }
-  .actions { display: flex; flex-direction: column; gap: 12px; }
-  .secondary-btn { background: #2a2a2a !important; border: 1px solid #444 !important; color: white !important; }
 
-  .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; font-size: 32px; margin: 15px 0; }
-  .star-rating input { display: none; }
-  .star-rating label { color: #333; cursor: pointer; transition: 0.2s; }
-  .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: var(--primary); }
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
 
-  @media (max-width: 768px) {
-    .product-layout { grid-template-columns: 1fr; gap: 25px; }
-    .image-section { flex-direction: column-reverse; }
-    .thumbs { flex-direction: row; width: 100%; overflow-x: auto; padding-bottom: 10px; }
-    .thumbs img { width: 70px; height: 70px; }
-    .details h2 { font-size: 24px; }
-    .details .price { font-size: 28px; }
+.product-back-button {
+
+  position:
+    fixed;
+
+  top:
+    18px;
+
+  left:
+    18px;
+
+  width:
+    52px;
+
+  height:
+    52px;
+
+  border:
+    1px solid #E4DED4;
+
+  border-radius:
+    14px;
+
+  background:
+    #FFFFFF;
+
+  color:
+    #2D2720;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  font-size:
+    23px;
+
+  cursor:
+    pointer;
+
+  z-index:
+    1000;
+
+  box-shadow:
+    0 5px 18px
+    rgba(45, 39, 30, 0.08);
+
+  transition:
+    all 0.2s ease;
+
+}
+
+
+.product-back-button:hover {
+
+  color:
+    var(--primary);
+
+  border-color:
+    var(--primary);
+
+  transform:
+    translateX(-2px);
+
+}
+
+
+.product-back-button:active {
+
+  transform:
+    scale(0.94);
+
+}
+
+
+/* =========================================================
+   PRODUCT DETAILS
+   ========================================================= */
+
+.product-layout {
+
+  display: grid;
+
+  grid-template-columns:
+    1.2fr 1fr;
+
+  gap: 40px;
+
+  margin-top: 20px;
+
+  align-items: start;
+
+}
+
+
+.image-section {
+
+  display: flex;
+
+  gap: 15px;
+
+}
+
+
+.thumbs {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+  width: 85px;
+
+  flex-shrink: 0;
+
+}
+
+
+.thumbs img {
+
+  width: 85px;
+
+  height: 85px;
+
+  object-fit: cover;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  border: 2px solid transparent;
+
+  background: #EEE9DF;
+
+}
+
+
+.thumbs img:hover {
+
+  border-color:
+    var(--primary);
+
+}
+
+
+.main-img {
+
+  width: 100%;
+
+  max-height: 550px;
+
+  object-fit: cover;
+
+  border-radius: 20px;
+
+  background: #EEE9DF;
+
+}
+
+
+.details h2 {
+
+  font-size: 32px;
+
+  margin-bottom: 10px;
+
+  color: var(--text);
+
+}
+
+
+.details .desc {
+
+  font-size: 16px;
+
+  color: var(--muted);
+
+  margin-bottom: 25px;
+
+  line-height: 1.6;
+
+}
+
+
+.details .price {
+
+  font-size: 36px;
+
+  font-weight: 700;
+
+  color: var(--primary);
+
+  margin-bottom: 25px;
+
+}
+
+
+/* =========================================================
+   SIZE SELECTOR
+   ========================================================= */
+
+.size-section {
+
+  margin-bottom: 28px;
+
+}
+
+
+.size-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 14px;
+
+  gap: 10px;
+
+}
+
+
+.size-title {
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  color: var(--text);
+
+}
+
+
+.selected-size-text {
+
+  font-size: 13px;
+
+  color: var(--muted);
+
+}
+
+
+.size-options {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+}
+
+
+.size-option {
+
+  width: 48px;
+
+  height: 48px;
+
+  border-radius: 50%;
+
+  border: 1.5px solid #D8D2C7;
+
+  background: #FFFFFF;
+
+  color: var(--text);
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  transition: all 0.2s ease;
+
+}
+
+
+.size-option:hover {
+
+  border-color:
+    var(--primary);
+
+  color:
+    var(--primary);
+
+  transform:
+    translateY(-2px);
+
+}
+
+
+.size-option.selected {
+
+  background:
+    var(--primary);
+
+  border-color:
+    var(--primary);
+
+  color:
+    #FFFFFF;
+
+  box-shadow:
+    0 5px 15px
+    rgba(89, 173, 147, 0.25);
+
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.actions {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+}
+
+
+/* =========================================================
+   FAVORITE
+   ========================================================= */
+
+.favorite-details-btn {
+
+  background:
+    #FFFFFF;
+
+  color:
+    var(--primary);
+
+  border:
+    1px solid var(--primary);
+
+}
+
+
+.favorite-details-btn:hover {
+
+  background:
+    var(--primary);
+
+  color:
+    #FFFFFF;
+
+}
+
+
+.favorite-details-btn.active {
+
+  background:
+    var(--primary);
+
+  color:
+    #FFFFFF;
+
+}
+
+
+/* =========================================================
+   REVIEW FORM
+   ========================================================= */
+
+.review-form {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+
+  margin-bottom: 40px;
+
+  align-items: center;
+
+}
+
+
+.review-form input,
+.review-form textarea {
+
+  background:
+    #FFFFFF;
+
+  border:
+    1px solid var(--border);
+
+  color:
+    var(--text);
+
+  padding:
+    15px;
+
+  border-radius:
+    12px;
+
+  outline:
+    none;
+
+  width:
+    100%;
+
+  font-family:
+    inherit;
+
+  transition:
+    0.2s ease;
+
+}
+
+
+.review-form input:focus,
+.review-form textarea:focus {
+
+  border-color:
+    var(--primary);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(89, 173, 147, 0.10);
+
+}
+
+
+/* =========================================================
+   STAR RATING
+   ========================================================= */
+
+.star-rating {
+
+  display: flex;
+
+  flex-direction:
+    row-reverse;
+
+  justify-content:
+    center;
+
+  font-size:
+    32px;
+
+  margin:
+    15px 0;
+
+}
+
+
+.star-rating input {
+
+  display:
+    none;
+
+}
+
+
+.star-rating label {
+
+  color:
+    #D8D2C7;
+
+  cursor:
+    pointer;
+
+  transition:
+    0.2s;
+
+}
+
+
+.star-rating input:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+
+  color:
+    var(--primary);
+
+}
+
+
+/* =========================================================
+   REVIEW IMAGE
+   ========================================================= */
+
+.review-image-upload {
+
+  width:
+    100%;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+}
+
+
+.review-image-upload input[type="file"] {
+
+  display:
+    none;
+
+}
+
+
+.review-image-button {
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    8px;
+
+  padding:
+    11px 20px;
+
+  border:
+    1px solid var(--primary);
+
+  border-radius:
+    25px;
+
+  color:
+    var(--primary);
+
+  background:
+    #FFFFFF;
+
+  cursor:
+    pointer;
+
+  font-weight:
+    600;
+
+}
+
+
+.review-image-hint {
+
+  font-size:
+    12px;
+
+  color:
+    var(--muted);
+
+  text-align:
+    center;
+
+  margin:
+    0;
+
+}
+
+
+.review-image-preview {
+
+  width:
+    100%;
+
+  display:
+    flex;
+
+  justify-content:
+    center;
+
+}
+
+
+.review-preview-wrapper {
+
+  position:
+    relative;
+
+  width:
+    150px;
+
+  height:
+    150px;
+
+}
+
+
+.review-preview-wrapper img {
+
+  width:
+    150px;
+
+  height:
+    150px;
+
+  object-fit:
+    cover;
+
+  border-radius:
+    14px;
+
+  border:
+    1px solid var(--border);
+
+}
+
+
+.remove-review-image {
+
+  position:
+    absolute;
+
+  top:
+    -8px;
+
+  right:
+    -8px;
+
+  width:
+    30px;
+
+  height:
+    30px;
+
+  border:
+    none;
+
+  border-radius:
+    50%;
+
+  background:
+    #FFFFFF;
+
+  color:
+    #555;
+
+  cursor:
+    pointer;
+
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  box-shadow:
+    0 4px 12px
+    rgba(0, 0, 0, 0.15);
+
+}
+
+
+/* =========================================================
+   CANCEL EDIT
+   ========================================================= */
+
+.cancel-edit-button {
+
+  width:
+    100%;
+
+  max-width:
+    220px;
+
+  padding:
+    12px 20px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    25px;
+
+  background:
+    #FFFFFF;
+
+  color:
+    var(--muted);
+
+  cursor:
+    pointer;
+
+  font-family:
+    inherit;
+
+  font-weight:
+    600;
+
+}
+
+
+/* =========================================================
+   REVIEW ITEM
+   ========================================================= */
+
+.review-item {
+
+  position:
+    relative;
+
+  background:
+    var(--card-soft);
+
+  padding:
+    20px;
+
+  border-radius:
+    15px;
+
+  margin-bottom:
+    15px;
+
+  border-left:
+    4px solid var(--primary);
+
+  border-top:
+    1px solid var(--border);
+
+  border-right:
+    1px solid var(--border);
+
+  border-bottom:
+    1px solid var(--border);
+
+  text-align:
+    left;
+
+}
+
+
+.review-top {
+
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    center;
+
+  gap:
+    15px;
+
+  margin-bottom:
+    10px;
+
+  padding-right:
+    45px;
+
+}
+
+
+/* =========================================================
+   THREE DOT
+   ========================================================= */
+
+.review-menu-container {
+
+  position:
+    absolute;
+
+  top:
+    10px;
+
+  right:
+    10px;
+
+  z-index:
+    50;
+
+}
+
+
+.review-menu-button {
+
+  width:
+    38px;
+
+  height:
+    38px;
+
+  border:
+    1px solid transparent;
+
+  border-radius:
+    50%;
+
+  background:
+    #FFFFFF;
+
+  color:
+    var(--muted);
+
+  cursor:
+    pointer;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  font-size:
+    18px;
+
+  transition:
+    all 0.2s ease;
+
+  box-shadow:
+    0 2px 8px
+    rgba(0, 0, 0, 0.06);
+
+}
+
+
+.review-menu-button:hover {
+
+  background:
+    var(--primary);
+
+  color:
+    #FFFFFF;
+
+  border-color:
+    var(--primary);
+
+}
+
+
+.review-menu {
+
+  position:
+    absolute;
+
+  top:
+    43px;
+
+  right:
+    0;
+
+  width:
+    175px;
+
+  background:
+    #FFFFFF;
+
+  border:
+    1px solid var(--border);
+
+  border-radius:
+    12px;
+
+  padding:
+    6px;
+
+  box-shadow:
+    0 10px 30px
+    rgba(45, 39, 30, 0.18);
+
+  display:
+    none;
+
+  z-index:
+    999;
+
+}
+
+
+.review-menu.show {
+
+  display:
+    block;
+
+}
+
+
+.review-menu button {
+
+  width:
+    100%;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    10px;
+
+  padding:
+    11px 12px;
+
+  border:
+    none;
+
+  background:
+    transparent;
+
+  color:
+    var(--text);
+
+  border-radius:
+    8px;
+
+  cursor:
+    pointer;
+
+  text-align:
+    left;
+
+  font-family:
+    inherit;
+
+  font-size:
+    14px;
+
+}
+
+
+.review-menu button:hover {
+
+  background:
+    rgba(89, 173, 147, 0.10);
+
+  color:
+    var(--primary);
+
+}
+
+
+.review-menu .delete-review-option {
+
+  color:
+    #D9534F;
+
+}
+
+
+/* =========================================================
+   REVIEW CONTENT
+   ========================================================= */
+
+.stars-text {
+
+  color:
+    var(--primary);
+
+  font-size:
+    14px;
+
+  letter-spacing:
+    2px;
+
+}
+
+
+.review-comment {
+
+  color:
+    var(--text);
+
+  line-height:
+    1.6;
+
+  margin:
+    5px 0 15px;
+
+  white-space:
+    pre-wrap;
+
+  word-break:
+    break-word;
+
+}
+
+
+.review-photo {
+
+  margin-top:
+    12px;
+
+}
+
+
+.review-photo img {
+
+  display:
+    block;
+
+  width:
+    100%;
+
+  max-width:
+    320px;
+
+  max-height:
+    320px;
+
+  object-fit:
+    cover;
+
+  border-radius:
+    14px;
+
+  cursor:
+    zoom-in;
+
+  border:
+    1px solid var(--border);
+
+}
+
+
+/* =========================================================
+   REVIEW IMAGE VIEWER
+   ========================================================= */
+
+.review-image-viewer {
+
+  position:
+    fixed;
+
+  inset:
+    0;
+
+  background:
+    rgba(0, 0, 0, 0.82);
+
+  z-index:
+    9999;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    30px;
+
+}
+
+
+.review-image-viewer-content {
+
+  position:
+    relative;
+
+  max-width:
+    900px;
+
+  max-height:
+    90vh;
+
+}
+
+
+.review-image-viewer-content img {
+
+  display:
+    block;
+
+  max-width:
+    100%;
+
+  max-height:
+    85vh;
+
+  object-fit:
+    contain;
+
+  border-radius:
+    14px;
+
+}
+
+
+.review-image-close {
+
+  position:
+    absolute;
+
+  top:
+    -45px;
+
+  right:
+    0;
+
+  width:
+    38px;
+
+  height:
+    38px;
+
+  border:
+    none;
+
+  border-radius:
+    50%;
+
+  background:
+    #FFFFFF;
+
+  color:
+    #333;
+
+  cursor:
+    pointer;
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .product-back-button {
+
+    top:
+      18px;
+
+    left:
+      18px;
+
+    width:
+      50px;
+
+    height:
+      50px;
+
   }
+
+
+  .product-layout {
+
+    grid-template-columns:
+      1fr;
+
+    gap:
+      25px;
+
+  }
+
+
+  .image-section {
+
+    flex-direction:
+      column-reverse;
+
+  }
+
+
+  .thumbs {
+
+    flex-direction:
+      row;
+
+    width:
+      100%;
+
+    overflow-x:
+      auto;
+
+    padding-bottom:
+      10px;
+
+  }
+
+
+  .thumbs img {
+
+    width:
+      70px;
+
+    height:
+      70px;
+
+  }
+
+
+  .details h2 {
+
+    font-size:
+      24px;
+
+  }
+
+
+  .details .price {
+
+    font-size:
+      28px;
+
+  }
+
+
+  .size-options {
+
+    gap:
+      8px;
+
+  }
+
+
+  .size-option {
+
+    width:
+      44px;
+
+    height:
+      44px;
+
+    font-size:
+      11px;
+
+  }
+
+
+  .size-header {
+
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+    gap:
+      4px;
+
+  }
+
+
+  .review-photo img {
+
+    max-width:
+      100%;
+
+    max-height:
+      280px;
+
+  }
+
+
+  .review-menu {
+
+    width:
+      160px;
+
+  }
+
+}
+
 </style>
+
+
 </body>
+
 </html>
