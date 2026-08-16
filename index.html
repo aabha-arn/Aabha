@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>AABHA | Women’s Clothing</title>
 
   <link rel="stylesheet" href="style.css" />
@@ -242,32 +242,37 @@
   </p>
 
 </header>
-
-
 <!-- =========================================================
-     EVENT / PROMOTIONAL BANNER
+     EVENT / PROMOTIONAL TEST BANNER
      ========================================================= -->
 
-<section
-  class="event-banner-section"
-  id="eventBannerSection"
->
+<section class="event-banner-section" id="eventBannerSection">
 
   <div class="event-banner-window">
 
-    <div
-      class="event-banner-track"
-      id="eventBannerTrack"
-    ></div>
+    <div class="event-banner-track" id="eventBannerTrack">
+
+      <div class="event-banner-slide">
+
+        <img
+          src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 500'%3E%3Crect width='1200' height='500' fill='%2359AD93'/%3E%3Ccircle cx='1050' cy='80' r='170' fill='%23F5E8C8' opacity='.35'/%3E%3Ccircle cx='120' cy='430' r='190' fill='%23F5E8C8' opacity='.25'/%3E%3Ctext x='600' y='190' text-anchor='middle' font-family='Georgia,serif' font-size='72' font-weight='bold' fill='white'%3EAABHA%3C/text%3E%3Ctext x='600' y='270' text-anchor='middle' font-family='Arial,sans-serif' font-size='42' font-weight='bold' fill='white'%3EONAM COLLECTION%3C/text%3E%3Ctext x='600' y='330' text-anchor='middle' font-family='Arial,sans-serif' font-size='25' fill='%23F5E8C8'%3ETEST EVENT BANNER%3C/text%3E%3C/svg%3E"
+          alt="Aabha Onam Collection Test Banner"
+        >
+
+      </div>
+
+    </div>
 
   </div>
 
-  <div
-    class="event-banner-dots"
-    id="eventBannerDots"
-  ></div>
+  <div class="event-banner-dots">
+
+    <span class="event-banner-dot active"></span>
+
+  </div>
 
 </section>
+
 
 
 <!-- =========================================================
@@ -991,357 +996,6 @@ function openProduct(
     id;
 
 }
-
-
-/* =========================================================
-   EVENT / PROMOTIONAL BANNER
-   ========================================================= */
-
-const eventBannerSection =
-  document.getElementById(
-    "eventBannerSection"
-  );
-
-const eventBannerTrack =
-  document.getElementById(
-    "eventBannerTrack"
-  );
-
-const eventBannerDots =
-  document.getElementById(
-    "eventBannerDots"
-  );
-
-let eventBanners = [];
-
-let currentEventBanner = 0;
-
-let eventBannerTimer;
-
-
-function getTestBannerUrl() {
-
-  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 600">
-      <rect width="1600" height="600" fill="#F4E7D2"/>
-      <circle cx="1320" cy="110" r="180" fill="#59AD93" opacity="0.18"/>
-      <circle cx="1450" cy="500" r="260" fill="#59AD93" opacity="0.14"/>
-      <circle cx="180" cy="80" r="150" fill="#FFFFFF" opacity="0.45"/>
-      <text x="800" y="225" text-anchor="middle" font-family="Georgia, serif" font-size="92" font-weight="bold" fill="#2D2720">AABHA</text>
-      <text x="800" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" font-weight="600" fill="#59AD93">ONAM COLLECTION</text>
-      <text x="800" y="385" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" fill="#5E574E">TEST EVENT BANNER</text>
-      <text x="800" y="455" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#5E574E">Where Tradition Meets Trends.</text>
-    </svg>
-  `);
-
-}
-
-
-function renderEventBanners() {
-
-  eventBannerSection.style.display =
-    "block";
-
-  eventBannerTrack.innerHTML =
-    "";
-
-  eventBannerDots.innerHTML =
-    "";
-
-  eventBanners.forEach(
-    (
-      banner,
-      index
-    ) => {
-
-      const slide =
-        document.createElement(
-          "div"
-        );
-
-      slide.className =
-        "event-banner-slide";
-
-      if (
-        banner.type === "video"
-      ) {
-
-        slide.innerHTML = `
-
-          <video
-            src="${banner.url}"
-            autoplay
-            muted
-            loop
-            playsinline
-            preload="metadata"
-          ></video>
-
-        `;
-
-      } else {
-
-        slide.innerHTML = `
-
-          <img
-            src="${banner.url}"
-            alt="${
-              banner.title ||
-              "Aabha Event Banner"
-            }"
-          >
-
-        `;
-
-      }
-
-      eventBannerTrack.appendChild(
-        slide
-      );
-
-      const dot =
-        document.createElement(
-          "button"
-        );
-
-      dot.type =
-        "button";
-
-      dot.className =
-        "event-banner-dot";
-
-      dot.setAttribute(
-        "aria-label",
-        `Show banner ${index + 1}`
-      );
-
-      dot.addEventListener(
-        "click",
-        () => {
-
-          currentEventBanner =
-            index;
-
-          updateEventBanner();
-
-          restartEventBanner();
-
-        }
-      );
-
-      eventBannerDots.appendChild(
-        dot
-      );
-
-    }
-  );
-
-  currentEventBanner =
-    0;
-
-  updateEventBanner();
-
-  clearInterval(
-    eventBannerTimer
-  );
-
-  if (
-    eventBanners.length > 1
-  ) {
-
-    startEventBanner();
-
-  }
-
-}
-
-
-function updateEventBanner() {
-
-  eventBannerTrack.style.transform =
-    `translateX(-${
-      currentEventBanner * 100
-    }%)`;
-
-  const dots =
-    document.querySelectorAll(
-      ".event-banner-dot"
-    );
-
-  dots.forEach(
-    (
-      dot,
-      index
-    ) => {
-
-      dot.classList.toggle(
-        "active",
-        index === currentEventBanner
-      );
-
-    }
-  );
-
-}
-
-
-function nextEventBanner() {
-
-  if (
-    eventBanners.length <= 1
-  ) {
-
-    return;
-
-  }
-
-  currentEventBanner =
-    (
-      currentEventBanner + 1
-    ) %
-    eventBanners.length;
-
-  updateEventBanner();
-
-}
-
-
-function startEventBanner() {
-
-  clearInterval(
-    eventBannerTimer
-  );
-
-  eventBannerTimer =
-    setInterval(
-      nextEventBanner,
-      5000
-    );
-
-}
-
-
-function restartEventBanner() {
-
-  if (
-    eventBanners.length > 1
-  ) {
-
-    startEventBanner();
-
-  }
-
-}
-
-
-/*
- * TEMPORARY TEST BANNER
- *
- * This makes the banner visible immediately so it can be tested
- * before the Flutter Admin App is connected.
- *
- * Later, the Admin App will add real banners to the Firebase
- * "banners" collection and this test banner can be removed.
- */
-
-eventBanners = [
-
-  {
-
-    id: "test-banner",
-
-    type: "image",
-
-    url: getTestBannerUrl(),
-
-    title: "Aabha Onam Collection Test Banner"
-
-  }
-
-];
-
-
-/*
- * Check Firebase for active banners.
- * If active banners exist, use them instead of the test banner.
- * If there are no active banners or Firebase fails, keep the
- * temporary test banner visible.
- */
-
-db.collection("banners")
-  .where(
-    "active",
-    "==",
-    true
-  )
-  .get()
-  .then(
-    snapshot => {
-
-      const firebaseBanners =
-        snapshot.docs
-          .map(
-            doc => ({
-
-              id:
-                doc.id,
-
-              ...doc.data()
-
-            })
-          )
-          .filter(
-            banner =>
-              banner.url &&
-              (
-                banner.type === "image" ||
-                banner.type === "video"
-              )
-          );
-
-      firebaseBanners.sort(
-        (a, b) => {
-
-          const aTime =
-            a.createdAt?.toMillis
-              ? a.createdAt.toMillis()
-              : 0;
-
-          const bTime =
-            b.createdAt?.toMillis
-              ? b.createdAt.toMillis()
-              : 0;
-
-          return bTime - aTime;
-
-        }
-      );
-
-      if (
-        firebaseBanners.length > 0
-      ) {
-
-        eventBanners =
-          firebaseBanners;
-
-      }
-
-      renderEventBanners();
-
-    }
-  )
-  .catch(
-    error => {
-
-      console.error(
-        "Error loading event banners:",
-        error
-      );
-
-      renderEventBanners();
-
-    }
-  );
 
 
 /* =========================================================
@@ -2529,147 +2183,6 @@ function openWhatsApp(
 }
 
 
-/* =========================================================
-   EVENT / PROMOTIONAL BANNER
-   ========================================================= */
-
-.event-banner-section {
-
-  width: min(1100px, 100%);
-
-  margin: 8px auto 22px;
-
-  padding: 0 18px;
-
-}
-
-.event-banner-window {
-
-  width: 100%;
-
-  overflow: hidden;
-
-  border-radius: 20px;
-
-  background: #F7F3EC;
-
-  border: 1px solid #E4DED4;
-
-  box-shadow:
-    0
-    10px
-    30px
-    rgba(
-      45,
-      39,
-      30,
-      0.08
-    );
-
-}
-
-.event-banner-track {
-
-  display: flex;
-
-  width: 100%;
-
-  transition:
-    transform
-    0.55s
-    ease;
-
-  will-change: transform;
-
-}
-
-.event-banner-slide {
-
-  min-width: 100%;
-
-  width: 100%;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  background: #F7F3EC;
-
-  line-height: 0;
-
-  user-select: none;
-
-  pointer-events: none;
-
-}
-
-.event-banner-slide img,
-.event-banner-slide video {
-
-  display: block;
-
-  width: 100%;
-
-  height: auto;
-
-  max-height: 58px;
-
-  object-fit: contain;
-
-  background: #F7F3EC;
-
-}
-
-.event-banner-dots {
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  gap: 7px;
-
-  margin-top: 11px;
-
-}
-
-.event-banner-dot {
-
-  width: 7px;
-
-  height: 7px;
-
-  padding: 0;
-
-  border: none;
-
-  border-radius: 50%;
-
-  background: #D8D2C7;
-
-  cursor: pointer;
-
-  transition:
-    all
-    0.2s
-    ease;
-
-}
-
-.event-banner-dot.active {
-
-  width: 22px;
-
-  border-radius: 10px;
-
-  background: var(--primary);
-
-}
-
-
 @media (
   max-width: 480px
 ) {
@@ -2720,6 +2233,69 @@ function openWhatsApp(
 
   }
 
+}
+
+
+/* =========================================================
+   EVENT / PROMOTIONAL BANNER
+   ========================================================= */
+
+.event-banner-section {
+  width: min(1100px, 100%);
+  margin: 8px auto 22px;
+  padding: 0 18px;
+}
+
+.event-banner-window {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #F7F3EC;
+  border: 1px solid #E4DED4;
+  box-shadow: 0 10px 30px rgba(45, 39, 30, 0.08);
+}
+
+.event-banner-track {
+  display: flex;
+  width: 100%;
+}
+
+.event-banner-slide {
+  min-width: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F7F3EC;
+  line-height: 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+.event-banner-slide img,
+.event-banner-slide video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 58px;
+  object-fit: contain;
+  background: #F7F3EC;
+}
+
+.event-banner-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.event-banner-dot {
+  width: 22px;
+  height: 7px;
+  border: none;
+  border-radius: 10px;
+  background: var(--primary);
 }
 
 </style>
