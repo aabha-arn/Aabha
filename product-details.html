@@ -197,7 +197,16 @@
         id="rev-text"
         placeholder="Share your feedback... (optional)"
         rows="4"
+        maxlength="600"
+        oninput="updateReviewCommentCounter()"
       ></textarea>
+
+      <div
+        id="reviewCommentCounter"
+        class="review-comment-counter"
+      >
+        0 / 100 words
+      </div>
 
 
       <!-- REVIEW IMAGE -->
@@ -1306,6 +1315,57 @@ function removeReviewImage() {
    SUBMIT REVIEW
    ========================================================= */
 
+const MAX_REVIEW_WORDS = 100;
+const MAX_REVIEW_CHARACTERS = 600;
+
+function getReviewWordCount(text) {
+  const trimmed = String(text || "").trim();
+  return trimmed ? trimmed.split(/\s+/).filter(Boolean).length : 0;
+}
+
+function updateReviewCommentCounter() {
+  const textarea = document.getElementById("rev-text");
+  const counter = document.getElementById("reviewCommentCounter");
+  if (!textarea || !counter) return;
+  const words = getReviewWordCount(textarea.value);
+  counter.textContent = `${words} / ${MAX_REVIEW_WORDS} words`;
+  counter.classList.toggle("limit-warning", words >= 80 && words < MAX_REVIEW_WORDS);
+  counter.classList.toggle("limit-reached", words >= MAX_REVIEW_WORDS);
+}
+
+function validateReviewComment(text) {
+  const trimmed = String(text || "").trim();
+  if (!trimmed) return { valid: true, message: "" };
+
+  if (trimmed.length > MAX_REVIEW_CHARACTERS) {
+    return { valid: false, message: `Your review is too long. Please keep it within ${MAX_REVIEW_CHARACTERS} characters.` };
+  }
+
+  const wordCount = getReviewWordCount(trimmed);
+  if (wordCount > MAX_REVIEW_WORDS) {
+    return { valid: false, message: `Please keep your review within ${MAX_REVIEW_WORDS} words so reviews stay easy to read.` };
+  }
+
+  if (/(https?:\/\/|www\.|[a-z0-9.-]+\.(com|in|net|org|co|me)\b)/i.test(trimmed)) {
+    return { valid: false, message: "Please do not post links or promotional URLs in reviews." };
+  }
+
+  if (/(.)\1{5,}/i.test(trimmed)) {
+    return { valid: false, message: "Please avoid excessive repeated characters in your review." };
+  }
+
+  const words = trimmed.toLowerCase().replace(/[^\p{L}\p{N}\s']/gu, " ").split(/\s+/).filter(Boolean);
+  const frequency = {};
+  for (const word of words) {
+    frequency[word] = (frequency[word] || 0) + 1;
+    if (frequency[word] > 4) {
+      return { valid: false, message: "Please avoid repeatedly posting the same word. Keep your review natural and readable." };
+    }
+  }
+
+  return { valid: true, message: "" };
+}
+
 function submitReview() {
 
   const name =
@@ -1353,6 +1413,20 @@ function submitReview() {
 
     alert(
       "Please write a review or add a photo."
+    );
+
+    return;
+
+  }
+
+
+  const commentValidation =
+    validateReviewComment(text);
+
+  if (!commentValidation.valid) {
+
+    alert(
+      commentValidation.message
     );
 
     return;
@@ -1455,6 +1529,8 @@ function clearReviewForm() {
 
 
   removeReviewImage();
+
+  updateReviewCommentCounter();
 
 }
 
@@ -1845,6 +1921,20 @@ function updateReview() {
 
     alert(
       "Please write a review or add a photo."
+    );
+
+    return;
+
+  }
+
+
+  const commentValidation =
+    validateReviewComment(text);
+
+  if (!commentValidation.valid) {
+
+    alert(
+      commentValidation.message
     );
 
     return;
@@ -2831,6 +2921,8 @@ function resetProductImageZoom() {
 }
 
 
+
+updateReviewCommentCounter();
 </script>
 
 
@@ -3281,6 +3373,24 @@ function resetProductImageZoom() {
 
 }
 
+
+.review-comment-counter {
+  width: 100%;
+  text-align: right;
+  margin-top: -8px;
+  font-size: 12px;
+  color: var(--muted);
+  transition: 0.2s ease;
+}
+
+.review-comment-counter.limit-warning {
+  color: #B07A20;
+}
+
+.review-comment-counter.limit-reached {
+  color: #D9534F;
+  font-weight: 700;
+}
 
 /* =========================================================
    STAR RATING
