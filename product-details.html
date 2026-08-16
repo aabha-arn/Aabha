@@ -9,7 +9,7 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
   >
 
   <link
@@ -522,6 +522,8 @@ function toggleFavorite() {
 
 
   updateFavoriteButton();
+
+  initProductImageZoom();
 
 }
 
@@ -2445,6 +2447,390 @@ function openReviewImage(
 
 }
 
+
+/* =========================================================
+   PRODUCT IMAGE ZOOM
+   Page zoom is disabled; only the main product image
+   supports pinch / double-tap / mouse-wheel zoom.
+   ========================================================= */
+
+let productImageZoom = 1;
+let productImageOffsetX = 0;
+let productImageOffsetY = 0;
+
+let productImagePinchStartDistance = 0;
+let productImagePinchStartZoom = 1;
+
+let productImagePanStartX = 0;
+let productImagePanStartY = 0;
+let productImagePanStartOffsetX = 0;
+let productImagePanStartOffsetY = 0;
+
+let productImageDragging = false;
+let productImageLastTap = 0;
+
+function initProductImageZoom() {
+
+  const image =
+    document.getElementById("mainImg");
+
+  if (!image) {
+    return;
+  }
+
+  image.style.touchAction = "none";
+  image.style.userSelect = "none";
+  image.style.webkitUserSelect = "none";
+  image.style.webkitUserDrag = "none";
+  image.style.webkitTouchCallout = "none";
+  image.draggable = false;
+
+  image.addEventListener(
+    "touchstart",
+    handleProductImageTouchStart,
+    { passive: false }
+  );
+
+  image.addEventListener(
+    "touchmove",
+    handleProductImageTouchMove,
+    { passive: false }
+  );
+
+  image.addEventListener(
+    "touchend",
+    handleProductImageTouchEnd,
+    { passive: false }
+  );
+
+  image.addEventListener(
+    "wheel",
+    handleProductImageWheel,
+    { passive: false }
+  );
+
+  image.addEventListener(
+    "dblclick",
+    handleProductImageDoubleClick
+  );
+
+  image.addEventListener(
+    "mousedown",
+    handleProductImageMouseDown
+  );
+
+  image.addEventListener(
+    "load",
+    resetProductImageZoom
+  );
+
+  applyProductImageTransform();
+}
+
+
+function handleProductImageTouchStart(event) {
+
+  event.preventDefault();
+
+  if (event.touches.length === 2) {
+
+    productImagePinchStartDistance =
+      getProductImageTouchDistance(
+        event.touches[0],
+        event.touches[1]
+      );
+
+    productImagePinchStartZoom =
+      productImageZoom;
+
+    return;
+  }
+
+  if (event.touches.length === 1) {
+
+    const now = Date.now();
+
+    if (now - productImageLastTap < 300) {
+
+      if (productImageZoom > 1) {
+
+        resetProductImageZoom();
+
+      } else {
+
+        productImageZoom = 2;
+        productImageOffsetX = 0;
+        productImageOffsetY = 0;
+
+        applyProductImageTransform();
+      }
+
+      productImageLastTap = 0;
+      return;
+    }
+
+    productImageLastTap = now;
+
+    productImagePanStartX =
+      event.touches[0].clientX;
+
+    productImagePanStartY =
+      event.touches[0].clientY;
+
+    productImagePanStartOffsetX =
+      productImageOffsetX;
+
+    productImagePanStartOffsetY =
+      productImageOffsetY;
+  }
+}
+
+
+function handleProductImageTouchMove(event) {
+
+  event.preventDefault();
+
+  if (event.touches.length === 2) {
+
+    const currentDistance =
+      getProductImageTouchDistance(
+        event.touches[0],
+        event.touches[1]
+      );
+
+    if (productImagePinchStartDistance > 0) {
+
+      productImageZoom =
+        Math.min(
+          4,
+          Math.max(
+            1,
+            productImagePinchStartZoom *
+              (currentDistance / productImagePinchStartDistance)
+          )
+        );
+
+      if (productImageZoom === 1) {
+
+        productImageOffsetX = 0;
+        productImageOffsetY = 0;
+      }
+
+      applyProductImageTransform();
+    }
+
+    return;
+  }
+
+  if (
+    event.touches.length === 1 &&
+    productImageZoom > 1
+  ) {
+
+    productImageOffsetX =
+      productImagePanStartOffsetX +
+      (
+        event.touches[0].clientX -
+        productImagePanStartX
+      );
+
+    productImageOffsetY =
+      productImagePanStartOffsetY +
+      (
+        event.touches[0].clientY -
+        productImagePanStartY
+      );
+
+    applyProductImageTransform();
+  }
+}
+
+
+function handleProductImageTouchEnd(event) {
+
+  event.preventDefault();
+
+  if (event.touches.length < 2) {
+    productImagePinchStartDistance = 0;
+  }
+
+  if (
+    productImageZoom <= 1.01
+  ) {
+
+    productImageZoom = 1;
+    productImageOffsetX = 0;
+    productImageOffsetY = 0;
+
+    applyProductImageTransform();
+  }
+}
+
+
+function getProductImageTouchDistance(touch1, touch2) {
+
+  const dx =
+    touch1.clientX -
+    touch2.clientX;
+
+  const dy =
+    touch1.clientY -
+    touch2.clientY;
+
+  return Math.sqrt(
+    dx * dx + dy * dy
+  );
+}
+
+
+function handleProductImageWheel(event) {
+
+  event.preventDefault();
+
+  const zoomStep =
+    event.deltaY < 0 ? 0.2 : -0.2;
+
+  productImageZoom =
+    Math.min(
+      4,
+      Math.max(
+        1,
+        productImageZoom + zoomStep
+      )
+    );
+
+  if (productImageZoom === 1) {
+
+    productImageOffsetX = 0;
+    productImageOffsetY = 0;
+  }
+
+  applyProductImageTransform();
+}
+
+
+function handleProductImageDoubleClick(event) {
+
+  event.preventDefault();
+
+  if (productImageZoom > 1) {
+
+    resetProductImageZoom();
+
+  } else {
+
+    productImageZoom = 2;
+    productImageOffsetX = 0;
+    productImageOffsetY = 0;
+
+    applyProductImageTransform();
+  }
+}
+
+
+function handleProductImageMouseDown(event) {
+
+  if (productImageZoom <= 1) {
+    return;
+  }
+
+  event.preventDefault();
+
+  productImageDragging = true;
+
+  productImagePanStartX =
+    event.clientX;
+
+  productImagePanStartY =
+    event.clientY;
+
+  productImagePanStartOffsetX =
+    productImageOffsetX;
+
+  productImagePanStartOffsetY =
+    productImageOffsetY;
+
+  document.addEventListener(
+    "mousemove",
+    handleProductImageMouseMove
+  );
+
+  document.addEventListener(
+    "mouseup",
+    handleProductImageMouseUp
+  );
+}
+
+
+function handleProductImageMouseMove(event) {
+
+  if (!productImageDragging) {
+    return;
+  }
+
+  productImageOffsetX =
+    productImagePanStartOffsetX +
+    (
+      event.clientX -
+      productImagePanStartX
+    );
+
+  productImageOffsetY =
+    productImagePanStartOffsetY +
+    (
+      event.clientY -
+      productImagePanStartY
+    );
+
+  applyProductImageTransform();
+}
+
+
+function handleProductImageMouseUp() {
+
+  productImageDragging = false;
+
+  document.removeEventListener(
+    "mousemove",
+    handleProductImageMouseMove
+  );
+
+  document.removeEventListener(
+    "mouseup",
+    handleProductImageMouseUp
+  );
+}
+
+
+function applyProductImageTransform() {
+
+  const image =
+    document.getElementById("mainImg");
+
+  if (!image) {
+    return;
+  }
+
+  image.style.transform =
+    `translate3d(
+      ${productImageOffsetX}px,
+      ${productImageOffsetY}px,
+      0
+    ) scale(${productImageZoom})`;
+}
+
+
+function resetProductImageZoom() {
+
+  productImageZoom = 1;
+  productImageOffsetX = 0;
+  productImageOffsetY = 0;
+  productImagePinchStartDistance = 0;
+
+  applyProductImageTransform();
+}
+
+
 </script>
 
 
@@ -3739,6 +4125,32 @@ function openReviewImage(
 
   }
 
+}
+
+
+/* =========================================================
+   PAGE ZOOM CONTROL + PRODUCT IMAGE ZOOM
+   ========================================================= */
+
+html,
+body {
+  touch-action: pan-x pan-y;
+  overscroll-behavior-x: none;
+}
+
+.main-img {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  transform-origin: center center;
+  cursor: zoom-in;
+  will-change: transform;
+}
+
+.main-img:active {
+  cursor: grabbing;
 }
 
 </style>
