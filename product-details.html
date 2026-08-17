@@ -197,7 +197,17 @@
         id="rev-text"
         placeholder="Share your feedback... (optional)"
         rows="4"
+        maxlength="600"
+        oninput="updateReviewCommentCounter()"
       ></textarea>
+
+      <div
+        id="reviewCommentCounter"
+        class="review-comment-counter"
+        aria-live="polite"
+      >
+        0 / 100 words
+      </div>
 
 
       <!-- REVIEW IMAGE -->
@@ -413,6 +423,97 @@ function getReviewerId() {
 
 const reviewerId =
   getReviewerId();
+
+
+/* =========================================================
+   REVIEW COMMENT RESTRICTIONS
+   ========================================================= */
+
+const MAX_REVIEW_WORDS = 100;
+const MAX_REVIEW_CHARACTERS = 600;
+const REVIEW_WARNING_WORDS = 80;
+
+function countReviewWords(text) {
+
+  const cleaned = String(text || "").trim();
+
+  if (!cleaned) return 0;
+
+  return cleaned.split(/\s+/).filter(Boolean).length;
+
+}
+
+function updateReviewCommentCounter() {
+
+  const textarea = document.getElementById("rev-text");
+  const counter = document.getElementById("reviewCommentCounter");
+
+  if (!textarea || !counter) return;
+
+  const words = countReviewWords(textarea.value);
+  const characters = textarea.value.length;
+
+  counter.textContent = `${words} / ${MAX_REVIEW_WORDS} words`;
+  counter.classList.remove("warning", "limit");
+
+  if (words >= MAX_REVIEW_WORDS || characters >= MAX_REVIEW_CHARACTERS) {
+    counter.classList.add("limit");
+  } else if (words >= REVIEW_WARNING_WORDS || characters >= 520) {
+    counter.classList.add("warning");
+  }
+
+}
+
+function validateReviewComment(text) {
+
+  const value = String(text || "");
+  const characters = value.length;
+  const words = countReviewWords(value);
+
+  if (characters > MAX_REVIEW_CHARACTERS) {
+    alert(`Your review can contain a maximum of ${MAX_REVIEW_CHARACTERS} characters.`);
+    return false;
+  }
+
+  if (words > MAX_REVIEW_WORDS) {
+    alert(`Your review can contain a maximum of ${MAX_REVIEW_WORDS} words.`);
+    return false;
+  }
+
+  const urlPattern = /(https?:\/\/|www\.|[a-z0-9-]+\.(?:com|in|net|org|co|shop|store|me)(?:\/|\b))/i;
+
+  if (urlPattern.test(value)) {
+    alert("Promotional links and URLs are not allowed in reviews.");
+    return false;
+  }
+
+  const repeatedCharacterPattern = /(.)\1{4,}/u;
+
+  if (repeatedCharacterPattern.test(value)) {
+    alert("Please avoid excessive repeated characters in your review.");
+    return false;
+  }
+
+  const wordsList = value
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+
+  for (let i = 0; i <= wordsList.length - 4; i++) {
+    if (
+      wordsList[i] === wordsList[i + 1] &&
+      wordsList[i] === wordsList[i + 2] &&
+      wordsList[i] === wordsList[i + 3]
+    ) {
+      alert("Please avoid repeated-word spam in your review.");
+      return false;
+    }
+  }
+
+  return true;
+
+}
 
 
 /* =========================================================
@@ -1330,6 +1431,19 @@ function submitReview() {
     )?.value;
 
 
+  updateReviewCommentCounter();
+
+
+  if (
+    text &&
+    !validateReviewComment(text)
+  ) {
+
+    return;
+
+  }
+
+
   if (
     !name ||
     !rating
@@ -1623,6 +1737,9 @@ function editReview(
         "";
 
 
+      updateReviewCommentCounter();
+
+
       document
         .querySelectorAll(
           'input[name="stars"]'
@@ -1820,6 +1937,19 @@ function updateReview() {
     document.querySelector(
       'input[name="stars"]:checked'
     )?.value;
+
+
+  updateReviewCommentCounter();
+
+
+  if (
+    text &&
+    !validateReviewComment(text)
+  ) {
+
+    return;
+
+  }
 
 
   if (
@@ -2893,6 +3023,29 @@ function openReviewImage(
     0 0 0 3px
     rgba(89, 173, 147, 0.10);
 
+}
+
+
+.review-comment-counter {
+
+  width: 100%;
+  box-sizing: border-box;
+  text-align: right;
+  margin-top: -8px;
+  font-size: 13px;
+  color: var(--muted);
+  transition: 0.2s ease;
+
+}
+
+.review-comment-counter.warning {
+  color: #c58a2a;
+  font-weight: 600;
+}
+
+.review-comment-counter.limit {
+  color: #c94b4b;
+  font-weight: 700;
 }
 
 
