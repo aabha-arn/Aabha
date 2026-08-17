@@ -243,31 +243,22 @@
 
 </header>
 <!-- =========================================================
-     EVENT / PROMOTIONAL TEST BANNER
+     MAIN EVENT / PROMOTIONAL BANNER
+     Firebase: banners/main
      ========================================================= -->
 
-<section class="event-banner-section" id="eventBannerSection">
+<section
+  class="event-banner-section"
+  id="eventBannerSection"
+  style="display:none;"
+>
 
   <div class="event-banner-window">
 
-    <div class="event-banner-track" id="eventBannerTrack">
-
-      <div class="event-banner-slide">
-
-        <img
-          src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 500'%3E%3Crect width='1200' height='500' fill='%2359AD93'/%3E%3Ccircle cx='1050' cy='80' r='170' fill='%23F5E8C8' opacity='.35'/%3E%3Ccircle cx='120' cy='430' r='190' fill='%23F5E8C8' opacity='.25'/%3E%3Ctext x='600' y='190' text-anchor='middle' font-family='Georgia,serif' font-size='72' font-weight='bold' fill='white'%3EAABHA%3C/text%3E%3Ctext x='600' y='270' text-anchor='middle' font-family='Arial,sans-serif' font-size='42' font-weight='bold' fill='white'%3EONAM COLLECTION%3C/text%3E%3Ctext x='600' y='330' text-anchor='middle' font-family='Arial,sans-serif' font-size='25' fill='%23F5E8C8'%3ETEST EVENT BANNER%3C/text%3E%3C/svg%3E"
-          alt="Aabha Onam Collection Test Banner"
-        >
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="event-banner-dots">
-
-    <span class="event-banner-dot active"></span>
+    <div
+      class="event-banner-track"
+      id="eventBannerTrack"
+    ></div>
 
   </div>
 
@@ -604,6 +595,168 @@ firebase.initializeApp(firebaseConfig);
 
 const db =
   firebase.firestore();
+
+
+/* =========================================================
+   MAIN EVENT / PROMOTIONAL BANNER
+   Firebase document: banners/main
+   ========================================================= */
+
+const eventBannerSection =
+  document.getElementById(
+    "eventBannerSection"
+  );
+
+
+const eventBannerTrack =
+  document.getElementById(
+    "eventBannerTrack"
+  );
+
+
+function hideMainBanner() {
+
+  eventBannerSection.style.display =
+    "none";
+
+  eventBannerTrack.innerHTML =
+    "";
+
+}
+
+
+function renderMainBanner(
+  banner
+) {
+
+  if (
+    !banner ||
+    banner.active !== true ||
+    !banner.url
+  ) {
+
+    hideMainBanner();
+
+    return;
+
+  }
+
+
+  const type =
+    String(
+      banner.type ||
+      "image"
+    ).toLowerCase();
+
+
+  if (
+    type !== "image" &&
+    type !== "video"
+  ) {
+
+    hideMainBanner();
+
+    return;
+
+  }
+
+
+  eventBannerTrack.innerHTML =
+    "";
+
+
+  const slide =
+    document.createElement(
+      "div"
+    );
+
+
+  slide.className =
+    "event-banner-slide";
+
+
+  /*
+   * The banner is intentionally NOT clickable.
+   * It only displays the content uploaded by
+   * the Admin App.
+   */
+
+  if (type === "video") {
+
+    slide.innerHTML = `
+
+      <video
+        src="${banner.url}"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+      ></video>
+
+    `;
+
+  } else {
+
+    slide.innerHTML = `
+
+      <img
+        src="${banner.url}"
+        alt="Aabha Event Banner"
+      >
+
+    `;
+
+  }
+
+
+  eventBannerTrack.appendChild(
+    slide
+  );
+
+
+  eventBannerSection.style.display =
+    "block";
+
+}
+
+
+/*
+ * Listen directly to banners/main.
+ * If the document is missing or active is false,
+ * the website shows no banner.
+ */
+
+db.collection("banners")
+  .doc("main")
+  .onSnapshot(
+    snapshot => {
+
+      if (!snapshot.exists) {
+
+        hideMainBanner();
+
+        return;
+
+      }
+
+
+      renderMainBanner(
+        snapshot.data()
+      );
+
+    },
+    error => {
+
+      console.error(
+        "Error loading banners/main:",
+        error
+      );
+
+      hideMainBanner();
+
+    }
+  );
 
 
 /* =========================================================
@@ -2280,22 +2433,6 @@ function openWhatsApp(
   max-height: 430px;
   object-fit: contain;
   background: #F7F3EC;
-}
-
-.event-banner-dots {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 7px;
-  margin-top: 11px;
-}
-
-.event-banner-dot {
-  width: 22px;
-  height: 7px;
-  border: none;
-  border-radius: 10px;
-  background: var(--primary);
 }
 
 </style>
